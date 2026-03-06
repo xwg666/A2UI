@@ -34,5 +34,17 @@
         "mobile": "+1 (650) 444-5555",
         "calendar": "Focus time",
         "imageUrl": "http://localhost:10002/static/profile3.png"
+    },
+    {
+        "id": "4",
+        "name": "xie wg",
+        "title": "UX Designer",
+        "team": "Design Team",
+        "department": "Design",
+        "location": "San Francisco",
+        "email": "morgan.white@example.com",
+        "mobile": "+1 (650) 555-6666",
+        "calendar": "Free until 5:00 PM",
+        "imageUrl": "http://localhost:10002/static/profile4.png"
     }
 ]

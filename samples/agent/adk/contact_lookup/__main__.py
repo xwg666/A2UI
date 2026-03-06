@@ -41,12 +41,12 @@ class MissingAPIKeyError(Exception):
 def main(host, port):
   try:
     # Check for API key only if Vertex AI is not configured
-    if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
-      if not os.getenv("GEMINI_API_KEY"):
-        raise MissingAPIKeyError(
-            "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
-            " is not TRUE."
-        )
+    # if not os.getenv("GOOGLE_GENAI_USE_VERTEXAI") == "TRUE":
+    #   if not os.getenv("GEMINI_API_KEY"):
+    #     raise MissingAPIKeyError(
+    #         "GEMINI_API_KEY environment variable not set and GOOGLE_GENAI_USE_VERTEXAI"
+    #         " is not TRUE."
+    #     )
 
     base_url = f"http://{host}:{port}"
     ui_agent = ContactAgent(base_url=base_url, use_ui=True)
@@ -73,7 +73,10 @@ def main(host, port):
         allow_headers=["*"],
     )
 
-    app.mount("/static", StaticFiles(directory="images"), name="static")
+    import pathlib
+    images_dir = pathlib.Path("images")
+    if images_dir.exists():
+        app.mount("/static", StaticFiles(directory="images"), name="static")
 
     uvicorn.run(app, host=host, port=port)
   except MissingAPIKeyError as e:

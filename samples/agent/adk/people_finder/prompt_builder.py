@@ -1,5 +1,16 @@
-# 通用 A2UI Prompt Builder
-# 用于数据查询类 Agent（餐厅查询、人员查询、联系人查询等）
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
@@ -17,14 +28,12 @@ WORKFLOW_DESCRIPTION = """
 """
 
 UI_DESCRIPTION = """
-## UI 模式选择,优先考虑使用人员展示的卡片UI设计
+## UI 模式选择,有限考虑使用人员展示的卡片UI设计
 
 根据数据量和类型选择：
 - **列表模式**：多条数据时使用 List 组件
 - **详情模式**：单条数据时使用 Card 组件
 - **消息模式**：仅提示信息时使用
-- **表格模式**：多条数据时使用 Table 组件
-- **图表模式**：多条数据时使用 Chart 组件
 
 ## 数据格式规范
 
@@ -50,26 +59,13 @@ UI_DESCRIPTION = """
 ```
 
 ### 关键规则
-- 优先使用人员展示的卡片UI设计
-- `path` 绑定必须以 `/` 开头：如 `/name`、`/rating`
+- `path` 绑定必须以 `/` 开头：如 `/name`、`/email`
 - `literalString` 用于固定文本
 - 列表用 `valueMap` 数组，外层 key 为列表名，内层 key 为项目标识
 """
 
 
-def get_ui_prompt():
-    """生成带 UI 的系统提示词"""
-    return f"""
-{ROLE_DESCRIPTION}
-
-{WORKFLOW_DESCRIPTION}
-
-{UI_DESCRIPTION}
-"""
-
-
 def get_text_prompt() -> str:
-    """生成纯文本系统提示词"""
     return """
 你是一个数据查询助手。
 
@@ -80,9 +76,8 @@ def get_text_prompt() -> str:
 """
 
 
-def generate_full_prompt():
-    """生成完整的提示词（用于调试）"""
-    return A2uiSchemaManager(
+if __name__ == "__main__":
+    prompt = A2uiSchemaManager(
         "0.8",
         basic_examples_path="examples/",
         schema_modifiers=[remove_strict_validation],
@@ -94,6 +89,4 @@ def generate_full_prompt():
         include_examples=True,
         validate_examples=False,
     )
-
-if __name__ == "__main__":
-    print(generate_full_prompt()[:2000])
+    print(str(prompt)[:2000])

@@ -62,5 +62,5 @@ def get_contact_info(name: str, tool_context: ToolContext, department: str = "")
     logger.error(f"  - Error: contact_data.json not found at {file_path}")
   except json.JSONDecodeError:
     logger.error(f"  - Error: Failed to decode JSON from {file_path}")
-
+  logger.info(f"  - 人员查询结果: {results}")
   return json.dumps(results)

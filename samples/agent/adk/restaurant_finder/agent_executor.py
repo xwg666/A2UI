@@ -154,7 +154,7 @@ class RestaurantAgentExecutor(AgentExecutor):
         if json_string.strip():
           try:
             json_string_cleaned = (
-                json_string.strip().lstrip("```json").rstrip("```").strip()
+                json_string.strip().lstrip("```json").rstrip("```").strip().replace("---a2ui_JSON---", "")
             )
             # The new protocol sends a stream of JSON objects.
             # For this example, we'll assume they are sent as a list in the final response.

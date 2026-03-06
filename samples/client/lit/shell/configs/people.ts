@@ -17,8 +17,8 @@
 import { AppConfig } from "./types.js";
 
 export const config: AppConfig = {
-  key: "restaurant",
-  title: "数据查询助手",
+  key: "people",
+  title: "People Finder",
   heroImage: "/hero.png",
   heroImageDark: "/hero-dark.png",
   background: `radial-gradient(
@@ -46,12 +46,11 @@ export const config: AppConfig = {
     light-dark(#f0f4f8, #0f172a) 0%,
     light-dark(#e2e8f0, #1e293b) 100%
   )`,
-  placeholder: "张三、火锅、VPN",
+  placeholder: "查询人员姓名，例如：张三",
   loadingText: [
-    "Finding the best spots for you...",
-    "Checking reviews...",
-    "Looking for open tables...",
-    "Almost there...",
+    "正在查询...",
+    "搜索人员信息...",
+    "获取数据中...",
   ],
-  serverUrl: "http://localhost:10002",
+  serverUrl: "http://localhost:10010",
 };

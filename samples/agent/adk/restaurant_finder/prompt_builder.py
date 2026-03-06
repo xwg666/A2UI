@@ -1,85 +1,108 @@
-# Copyright 2025 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# 通用 A2UI Prompt Builder
+# 用于数据查询类 Agent（餐厅查询、人员查询、联系人查询等）
 
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
-ROLE_DESCRIPTION = (
-    "You are a helpful restaurant finding assistant. Your final output MUST be a a2ui"
-    " UI JSON response."
-)
+ROLE_DESCRIPTION = "你是一个专业的UI设计师。根据用户查询的结果，生成适合的 UI 界面。"
 
 WORKFLOW_DESCRIPTION = """
-To generate the response, you MUST follow these rules:
-1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-2.  The first part is your conversational text response.
-3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
+生成响应时，遵循以下规则：
+1. 响应必须分为两部分，使用分隔符 `---a2ui_JSON---` 分隔
+2. 第一部分：对话文本回复
+3. 第二部分：A2UI JSON 消息数组
+4. JSON 必须符合 A2UI Schema 规范
+5. 先调用工具获取数据，再根据数据生成合适的 UI
+6. 空结果时：文本---a2ui_JSON---[]
+"""
+#优先考虑使用餐厅展示的列表UI设计
+UI_DESCRIPTION = """
+## UI 模式选择，根据问答结果内容领域，选择对应的UI设计模式。多行展示的时候，使用行列表组件,字体和图表大小比例要协调。
+
+根据数据量和类型选择：
+- **列表模式**：多条数据时使用 List 组件
+- **详情模式**：单条数据时使用 Card 组件
+- **消息模式**：仅提示信息时使用
+- **表格模式**：多条数据时使用 Table 组件
+- **图表模式**：多条数据时使用 Chart 组件
+
+## 数据格式规范
+
+### 列表数据 (dataBinding="/xxx")
+数据来自工具返回的数组，例如工具返回 `[{"name": "餐厅A", "rating": "5星"}, ...]`
+
+正确的数据绑定格式：
+```json
+{
+  "key": "restaurants",
+  "valueMap": [
+    {"key": "0", "valueMap": [
+      {"key": "name", "valueString": "餐厅A"},
+      {"key": "rating", "valueString": "5星"}
+    ]},
+    {"key": "1", "valueMap": [
+      {"key": "name", "valueString": "餐厅B"},
+      {"key": "rating", "valueString": "4星"}
+    ]}
+  ]
+}
+```
+
+**关键**：数组索引要用 `"key": "0"`, `"key": "1"` 等形式！
+
+### 单条数据
+```json
+[
+  {"key": "name", "valueString": "餐厅名称"},
+  {"key": "rating", "valueString": "5星"}
+]
+```
+
+### 关键规则
+- `path` 绑定必须以 `/` 开头：如 `/name`、`/rating`
+- `literalString` 用于固定文本
+- 列表用 `valueMap` 数组，外层 key 为列表名，内层 key 为项目标识
+- **模板组件必须先定义，再被引用**
+- **数组索引用 0, 1, 2... 作为 key**
 """
 
-UI_DESCRIPTION = """
--   If the query is for a list of restaurants, use the restaurant data you have already received from the `get_restaurants` tool to populate the `dataModelUpdate.contents` array (e.g., as a `valueMap` for the "items" key).
--   If the number of restaurants is 5 or fewer, you MUST use the `SINGLE_COLUMN_LIST_EXAMPLE` template.
--   If the number of restaurants is more than 5, you MUST use the `TWO_COLUMN_LIST_EXAMPLE` template.
--   If the query is to book a restaurant (e.g., "USER_WANTS_TO_BOOK..."), you MUST use the `BOOKING_FORM_EXAMPLE` template.
--   If the query is a booking submission (e.g., "User submitted a booking..."), you MUST use the `CONFIRMATION_EXAMPLE` template.
+
+def get_ui_prompt():
+    """生成带 UI 的系统提示词"""
+    return f"""
+{ROLE_DESCRIPTION}
+
+{WORKFLOW_DESCRIPTION}
+
+{UI_DESCRIPTION}
 """
 
 
 def get_text_prompt() -> str:
-  """
-  Constructs the prompt for a text-only agent.
-  """
-  return """
-    You are a helpful restaurant finding assistant. Your final output MUST be a text response.
+    """生成纯文本系统提示词"""
+    return """
+你是一个数据查询助手。
 
-    To generate the response, you MUST follow these rules:
-    1.  **For finding restaurants:**
-        a. You MUST call the `get_restaurants` tool. Extract the cuisine, location, and a specific number (`count`) of restaurants from the user's query.
-        b. After receiving the data, format the restaurant list as a clear, human-readable text response. You MUST preserve any markdown formatting (like for links) that you receive from the tool.
-
-    2.  **For booking a table (when you receive a query like 'USER_WANTS_TO_BOOK...'):**
-        a. Respond by asking the user for the necessary details to make a booking (party size, date, time, dietary requirements).
-
-    3.  **For confirming a booking (when you receive a query like 'User submitted a booking...'):**
-        a. Respond with a simple text confirmation of the booking details.
-    """
+规则：
+1. 调用工具获取数据
+2. 将结果格式化为清晰的文本回复
+3. 如果没有找到，告知用户
+"""
 
 
+def generate_full_prompt():
+    """生成完整的提示词（用于调试）"""
+    return A2uiSchemaManager(
+        "0.8",
+        basic_examples_path="examples/",
+        schema_modifiers=[remove_strict_validation],
+    ).generate_system_prompt(
+        role_description=ROLE_DESCRIPTION,
+        workflow_description=WORKFLOW_DESCRIPTION,
+        ui_description=UI_DESCRIPTION,
+        include_schema=True,
+        include_examples=True,
+        validate_examples=False,
+    )
 if __name__ == "__main__":
-  # Example of how to use the A2UI Schema Manager to generate a system prompt
-  # In your actual application, you would call this from your main agent logic.
-
-  # You can now easily construct a prompt with the relevant examples.
-  # For a different agent (e.g., a flight booker), you would pass in
-  # different examples but use the same `get_ui_prompt` function.
-  restaurant_prompt = A2uiSchemaManager(
-      "0.8",
-      basic_examples_path="examples/",
-      schema_modifiers=[remove_strict_validation],
-  ).generate_system_prompt(
-      role_description=ROLE_DESCRIPTION,
-      workflow_description=WORKFLOW_DESCRIPTION,
-      ui_description=UI_DESCRIPTION,
-      include_schema=True,
-      include_examples=True,
-      validate_examples=True,
-  )
-
-  print(restaurant_prompt)
-
-  # This demonstrates how you could save the prompt to a file for inspection
-  with open("generated_prompt.txt", "w") as f:
-    f.write(restaurant_prompt)
-  print("\nGenerated prompt saved to generated_prompt.txt")
+    print(generate_full_prompt()[:2000])

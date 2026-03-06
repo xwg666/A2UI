@@ -1,0 +1,17 @@
+[project]
+name = "people-finder"
+version = "0.1.0"
+description = "People Finder Agent"
+requires-python = ">=3.10"
+dependencies = [
+    "a2a",
+    "a2ui",
+    "google-adk",
+    "litellm",
+    "uvicorn",
+    "starlette",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

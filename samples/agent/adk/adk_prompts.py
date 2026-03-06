@@ -17,14 +17,24 @@ WORKFLOW_DESCRIPTION = """
 """
 
 UI_DESCRIPTION = """
-## UI 模式选择,优先考虑使用人员展示的卡片UI设计
+## 组件定义顺序规则（重要！）
+
+**必须先定义组件，再引用组件！**
+
+错误的顺序（会导致验证失败）：
+1. surfaceUpdate: 定义 List 引用 template
+2. surfaceUpdate: 定义 template 组件
+
+正确的顺序：
+1. surfaceUpdate: 先定义 template 组件
+2. surfaceUpdate: 再定义 List 引用 template
+
+## UI 模式选择
 
 根据数据量和类型选择：
 - **列表模式**：多条数据时使用 List 组件
 - **详情模式**：单条数据时使用 Card 组件
 - **消息模式**：仅提示信息时使用
-- **表格模式**：多条数据时使用 Table 组件
-- **图表模式**：多条数据时使用 Chart 组件
 
 ## 数据格式规范
 
@@ -50,10 +60,10 @@ UI_DESCRIPTION = """
 ```
 
 ### 关键规则
-- 优先使用人员展示的卡片UI设计
 - `path` 绑定必须以 `/` 开头：如 `/name`、`/rating`
 - `literalString` 用于固定文本
 - 列表用 `valueMap` 数组，外层 key 为列表名，内层 key 为项目标识
+- **模板组件必须先定义，再被引用**
 """
 
 
@@ -94,6 +104,3 @@ def generate_full_prompt():
         include_examples=True,
         validate_examples=False,
     )
-
-if __name__ == "__main__":
-    print(generate_full_prompt()[:2000])

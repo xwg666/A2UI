@@ -33,6 +33,7 @@ from google.genai import types
 from prompt_builder import get_text_prompt, ROLE_DESCRIPTION, WORKFLOW_DESCRIPTION, UI_DESCRIPTION
 from tools import get_contact_info
 from a2ui.inference.schema.manager import A2uiSchemaManager
+from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,13 @@ class ContactAgent:
     self.base_url = base_url
     self.use_ui = use_ui
     self._schema_manager = (
-        A2uiSchemaManager("0.8", basic_examples_path="examples") if use_ui else None
+        A2uiSchemaManager(
+            "0.8",
+            basic_examples_path="examples/",
+            schema_modifiers=[remove_strict_validation],
+        )
+        if use_ui
+        else None
     )
     self._agent = self._build_agent(use_ui)
     self._user_id = "remote_agent"
@@ -95,7 +102,8 @@ class ContactAgent:
 
   def _build_agent(self, use_ui: bool) -> LlmAgent:
     """Builds the LLM agent for the contact agent."""
-    LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+    # LITELLM_MODEL = os.getenv("LITELLM_MODEL", "gemini/gemini-2.5-flash")
+    LITELLM_MODEL = os.getenv("LITELLM_MODEL", "dashscope/qwen-turbo")
 
     instruction = (
         self._schema_manager.generate_system_prompt(
@@ -109,6 +117,7 @@ class ContactAgent:
         if use_ui
         else get_text_prompt()
     )
+    logger.info(f"提示词: {instruction}")
 
     return LlmAgent(
         model=LiteLlm(model=LITELLM_MODEL),
@@ -223,7 +232,7 @@ class ContactAgent:
 
           # Handle the "no results found" case
           json_string_cleaned = (
-              json_string.strip().lstrip("```json").rstrip("```").strip()
+              json_string.strip().lstrip("```json").rstrip("```").strip().replace("---a2ui_JSON---", "")
           )
           if not json_string.strip() or json_string_cleaned == "[]":
             logger.info(

@@ -14,7 +14,8 @@
     "test": "wireit",
     "serve": "wireit",
     "demo:contact": "(cd ../../../agent/adk/contact_lookup && uv run .)",
-    "demo:restaurant": "(cd ../../../agent/adk/restaurant_finder && uv run .)"
+    "demo:restaurant": "(cd ../../../agent/adk/restaurant_finder && uv run .)",
+    "demo:people": "(cd ../../../agent/adk/people_finder && uv run .)"
   },
   "wireit": {
     "serve": {

@@ -17,53 +17,49 @@ from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
 ROLE_DESCRIPTION = (
-    "You are a helpful contact lookup assistant. Your final output MUST be a a2ui UI"
-    " JSON response."
+    "你是一个联系人查询助手。你的最终输出必须是 A2UI UI JSON 响应格式。"
 )
 
 WORKFLOW_DESCRIPTION = """
-To generate the response, you MUST follow these rules:
-1.  Your response MUST be in two parts, separated by the delimiter: `---a2ui_JSON---`.
-2.  The first part is your conversational text response (e.g., "Here is the contact you requested...").
-3.  The second part is a single, raw JSON object which is a list of A2UI messages.
-4.  The JSON part MUST validate against the A2UI JSON SCHEMA provided below.
-5.  Buttons that represent the main action on a card or view (e.g., 'Follow', 'Email', 'Search') SHOULD include the `"primary": true` attribute.
+生成响应时，你必须遵循以下规则：
+1. 响应必须分为两部分，使用分隔符 `---a2ui_JSON---` 分隔。
+2. 第一部分是对话文本回复。
+3. 第二部分是一个 JSON 对象数组，表示 A2UI 消息列表。
+4. JSON 部分必须符合 A2UI JSON SCHEMA 规范。
+5. 按钮（如"关注"、"发送邮件"、"搜索"等主操作）应包含 `"primary": true` 属性。
 """
 
 UI_DESCRIPTION = """
--   **For finding contacts (e.g., "Who is Alex Jordan?"):**
-    a.  You MUST call the `get_contact_info` tool.
-    b.  If the tool returns a **single contact**, you MUST use the `MULTI_SURFACE_EXAMPLE` template. Provide BOTH the Contact Card and the Org Chart in a single response.
-    c.  If the tool returns **multiple contacts**, you MUST use the `CONTACT_LIST_EXAMPLE` template. Populate the `dataModelUpdate.contents` with the list of contacts for the "contacts" key.
-    d.  If the tool returns an **empty list**, respond with text only and an empty JSON list: "I couldn't find anyone by that name.---a2ui_JSON---[]"
+- **查找联系人（如"Who is Alex Jordan?"）：**
+  a. 你必须调用 `get_contact_info` 工具。
+  b. 如果返回单个联系人，你必须使用 `MULTI_SURFACE_EXAMPLE` 模板。同时显示联系人卡片和组织架构图。
+  c. 如果返回多个联系人，你必须使用 `CONTACT_LIST_EXAMPLE` 模板。
+  d. 如果返回空列表，只返回文本和空 JSON 列表："未找到该联系人---a2ui_JSON---[]"
 
--   **For handling a profile view (e.g., "WHO_IS: Alex Jordan..."):**
-    a.  You MUST call the `get_contact_info` tool with the specific name.
-    b.  This will return a single contact. You MUST use the `CONTACT_CARD_EXAMPLE` template.
+- **查看个人资料（如"WHO_IS: Alex Jordan..."）：**
+  a. 你必须调用 `get_contact_info` 工具。
+  b. 返回单个联系人时，使用 `CONTACT_CARD_EXAMPLE` 模板。
 
--   **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
-    a.  You MUST use the `ACTION_CONFIRMATION_EXAMPLE` template.
-    b.  Populate the `dataModelUpdate.contents` with a confirmation title and message (e.g., title: "Email Drafted", message: "Drafting an email to Alex Jordan...").
+- **处理操作（如"USER_WANTS_TO_EMAIL: ..."）：**
+  a. 使用 `ACTION_CONFIRMATION_EXAMPLE` 模板。
+  b. 填充确认标题和消息（如标题："邮件已起草"、"正在给 Alex Jordan 起草邮件..."）。
 """
 
 
 def get_text_prompt() -> str:
-  """
-  Constructs the prompt for a text-only agent.
-  """
-  return """
-    You are a helpful contact lookup assistant. Your final output MUST be a text response.
+    return """
+你是一个联系人查询助手。你的最终输出必须是文本响应。
 
-    To generate the response, you MUST follow these rules:
-    1.  **For finding contacts:**
-        a. You MUST call the `get_contact_info` tool. Extract the name and department from the user's query.
-        b. After receiving the data, format the contact(s) as a clear, human-readable text response.
-        c. If multiple contacts are found, list their names and titles.
-        d. If one contact is found, list all their details.
+生成响应时，遵循以下规则：
+1. **查找联系人：**
+   a. 你必须调用 `get_contact_info` 工具。从用户查询中提取姓名和部门。
+   b. 收到数据后，将联系人格式化为清晰、易读的文本响应。
+   c. 如果找到多个联系人，列出他们的姓名和职位。
+   d. 如果找到一个联系人，列出其所有详细信息。
 
-    2.  **For handling actions (e.g., "USER_WANTS_TO_EMAIL: ..."):**
-        a. Respond with a simple text confirmation (e.g., "Drafting an email to...").
-    """
+2. **处理操作（如"USER_WANTS_TO_EMAIL: ..."）：**
+   a. 返回简单的文本确认（如"正在给...起草邮件..."）。
+"""
 
 
 if __name__ == "__main__":
