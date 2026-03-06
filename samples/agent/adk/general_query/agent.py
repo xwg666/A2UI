@@ -186,17 +186,27 @@ class GeneralQueryAgent:
                         try:
                             parsed = json.loads(json_cleaned)
                         except json.JSONDecodeError as e:
+                            logger.warning(f"JSON 解析错误: {e}")
                             try:
                                 json_cleaned_fixed = json_cleaned[:e.pos] + json_cleaned[e.pos+1:]
                                 parsed = json.loads(json_cleaned_fixed)
                             except:
-                                json_cleaned = "[" + json_cleaned + "]"
-                                parsed = json.loads(json_cleaned)
+                                try:
+                                    import re
+                                    json_cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', json_cleaned)
+                                    parsed = json.loads(json_cleaned)
+                                except:
+                                    json_cleaned = "[" + json_cleaned + "]"
+                                    parsed = json.loads(json_cleaned)
 
-                        catalog = self._schema_manager.get_selected_catalog()
-                        if catalog and catalog.validator:
-                            catalog.validator.validate(parsed)
-                        is_valid = True
+                        try:
+                            catalog = self._schema_manager.get_selected_catalog()
+                            if catalog and catalog.validator:
+                                catalog.validator.validate(parsed)
+                            is_valid = True
+                        except jsonschema.exceptions.ValidationError as e:
+                            logger.warning(f"JSON 验证错误: {e}")
+                            error_msg = str(e)
 
                 except (ValueError, json.JSONDecodeError, jsonschema.exceptions.ValidationError) as e:
                     logger.warning(f"验证失败: {e}")

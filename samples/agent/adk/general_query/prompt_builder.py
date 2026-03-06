@@ -13,12 +13,17 @@ WORKFLOW_DESCRIPTION = """
    - 例如：get_data 返回 [{"姓名":"张三"},{"姓名":"李四"}] → 生成 List 组件展示这些数据
    - **如果返回数据为空**：直接生成 A2UI 显示"没有找到匹配的数据"
 
-2. **闲聊/问候时**：直接生成 A2UI 显示文本，不需要调用任何工具！
+2. **用户发送 JSON 数据时**：根据 JSON 数据生成 A2UI 展示
+   - 例如：用户发送 `{"姓名":"张三","年龄":18}` → 生成 List/Card 组件展示数据
+   - ⚠️ **必须使用 path 绑定真实数据**，不要用 literalString！
+   - 例如：`"url": {"path": "/imageUrl"}` 而不是 `"url": {"literalString": "xxx"}`
 
-3. **错误示例（禁止）**：
+3. **闲聊/问候时**：直接生成 A2UI 显示文本，不需要调用任何工具！
+
+4. **错误示例（禁止）**：
    - get_data 返回了数据 → 生成"没有找到数据" → 错误！
    
-4. **正确示例**：
+5. **正确示例**：
    - get_data 返回 [{"姓名":"张三"}] → 生成 List 组件展示"张三"
  
  5. ⚠️ **重要**：A2UI JSON 必须包含 "beginRendering" 和 "surfaceUpdate" 两个字段
@@ -167,10 +172,22 @@ JSON 数组必须按顺序包含：
 4. surfaceUpdate 必须有 "surfaceId": "default"
 5. dataModelUpdate 必须有 "surfaceId": "default"
 6. **必须使用工具返回的真实数据**，不能使用示例数据
-7. ⚠️ 支持的交互组件：DateTimeInput, MultipleChoice, CheckBox, Slider, TextField
-8. ⚠️ 禁止使用 OptionSelect、Input、TextInput 等非标准组件
-9. ⚠️ MultipleChoice 必须使用 `path` 绑定数据，不能只用 `literalArray`
-10. ⚠️ **重要**：多个数据项必须放在同一个 "key": "items" 的 valueMap 数组中，不能分开多个 "key": "items"
+7. ⚠️ **默认规则**：查询数据后，**必须**显示数据（用 List/Card 组件），**不要**生成输入框！
+8. ⚠️ **只有**当用户明确要求"输入"、"选择"、"填写"时才生成交互组件
+9. ⚠️ **重要**：生成输入组件时，**必须**同时生成 Button 组件用于提交
+10. ⚠️ **重要**：Button 的 child 属性引用的组件 ID **必须**在 components 中定义！例如：`"child": "submit-button-text"` → 必须有 `{"id": "submit-button-text", "component": {"Text": {...}}}`
+11. ⚠️ **重要**：Button 的 context **必须**包含输入框数据！例如：
+    ```json
+    "action": {"name": "submitInput", "context": [{"key": "inputText", "value": {"path": "/inputText"}}]}
+    ```
+12. ⚠️ **输入框限制**：使用 `validationRegexp` 限制输入长度，例如：
+    - 限制 10 个字符：`"validationRegexp": "^.{0,10}$"`
+    - 限制 1-3 个字符：`"validationRegexp": "^.{1,3}$"`
+    - 只允许数字：`"validationRegexp": "^[0-9]+$"`
+13. ⚠️ 支持的交互组件：DateTimeInput, MultipleChoice, CheckBox, Slider, TextField
+14. ⚠️ 禁止使用 OptionSelect、Input、TextInput 等非标准组件
+15. ⚠️ MultipleChoice 必须使用 `path` 绑定数据，不能只用 `literalArray`
+16. ⚠️ **重要**：多个数据项必须放在同一个 "key": "items" 的 valueMap 数组中，不能分开多个 "key": "items"
 """
 
 def get_ui_prompt():
