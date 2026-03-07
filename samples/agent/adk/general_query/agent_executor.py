@@ -141,21 +141,43 @@ class GeneralQueryAgentExecutor(AgentExecutor):
             
             # 处理数据输入
             elif isinstance(part.root, DataPart):
-                logger.info(f"  DataPart.data: {part.root.data}")
+                data = part.root.data
+                logger.info(f"  DataPart.data type: {type(data)}")
+                logger.info(f"  DataPart.data keys: {data.keys() if isinstance(data, dict) else 'N/A'}")
+                logger.info(f"  DataPart.data: {json.dumps(data, ensure_ascii=False) if isinstance(data, (dict, list)) else data}")
                 
-                # 检查是否为用户操作（如按钮点击）
-                if "userAction" in part.root.data:
-                    ui_event_part = part.root.data["userAction"]
-                    logger.info(f"  userAction: {ui_event_part}")
-                    return f"User submitted: {ui_event_part.get('actionName')}, data: {ui_event_part.get('context', {})}"
+                # 处理字典数据
+                if isinstance(data, dict):
+                    # 检查是否为用户操作（如按钮点击）
+                    if "userAction" in data:
+                        ui_event_part = data["userAction"]
+                        logger.info(f"  userAction type: {type(ui_event_part)}")
+                        logger.info(f"  userAction: {json.dumps(ui_event_part, ensure_ascii=False) if isinstance(ui_event_part, dict) else ui_event_part}")
+                        
+                        # 获取 actionName 和 context
+                        # 注意：前端使用 "name" 而不是 "actionName"
+                        action_name = ui_event_part.get("name") or ui_event_part.get("actionName", "unknown")
+                        action_context = ui_event_part.get("context", {})
+                        
+                        # 如果 actionName 为空或 None，尝试从其他字段获取
+                        if not action_name or action_name == "unknown":
+                            # 可能是直接的 context 数据
+                            if action_context:
+                                logger.info(f"  使用 context 作为数据: {action_context}")
+                                return f"USER_PROVIDED_DATA: {json.dumps(action_context)}"
+                            # 或者返回整个数据
+                            logger.info(f"  使用整个 data 作为数据")
+                            return f"USER_PROVIDED_DATA: {json.dumps(data)}"
+                        
+                        return f"User submitted: {action_name}, data: {action_context}"
+                    
+                    # 其他字典数据
+                    return f"USER_PROVIDED_DATA: {json.dumps(data)}"
                 
-                # 处理其他 JSON 数据
-                else:
-                    data = part.root.data
-                    if isinstance(data, dict):
-                        return f"USER_PROVIDED_DATA: {json.dumps(data)}"
-                    elif isinstance(data, list):
-                        return f"USER_PROVIDED_DATA: {json.dumps(data)}"
+                # 处理列表数据
+                elif isinstance(data, list):
+                    logger.info(f"  DataPart.data is list, length: {len(data)}")
+                    return f"USER_PROVIDED_DATA: {json.dumps(data)}"
 
         # 如果没有找到有效输入，使用默认方法
         logger.info(f"  没有找到有效输入，使用 get_user_input")

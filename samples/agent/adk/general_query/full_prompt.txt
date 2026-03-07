@@ -26,6 +26,14 @@
 
 4. **空结果时**：文本---a2ui_JSON---[]
 
+5. **⚠️ 禁止使用的属性**：`fit`、`usageHint`、`OptionSelect`、`Input`、`TextInput`
+   - 这些属性会导致验证失败，不要在 JSON 中使用
+
+6. **⚠️ 多条数据展示必须使用 List 组件**
+   - 必须使用 `dataBinding: "/items"` 绑定数组数据
+   - 模板组件内部使用 `path` 绑定字段，如 `"/姓名"`、`"/价格"`
+   - **单条数据也必须使用 List 组件**，不能直接使用 Card
+
 
 ## UI Description:
 
