@@ -486,6 +486,25 @@ export class A2UILayoutEditor extends SignalWatcher(LitElement) {
                 }
               }
             }
+            
+            // 如果 context 仍然为空，尝试从当前数据上下文获取数据
+            if (Object.keys(context).length === 0 && evt.detail.dataContextPath) {
+              // 使用 dataContextPath 获取当前数据
+              const dataContextPath = evt.detail.dataContextPath;
+              console.log(`[ButtonClick] dataContextPath:`, dataContextPath);
+              
+              // 使用 sourceComponent 和 dataContextPath 获取数据
+              // "." 表示获取当前数据上下文的数据
+              const data = this.#processor.getData(
+                evt.detail.sourceComponent,
+                ".",
+                surfaceId
+              );
+              console.log(`[ButtonClick] Got data from sourceComponent:`, data);
+              if (data) {
+                context['data'] = data;
+              }
+            }
 
             const message: v0_8.Types.A2UIClientEventMessage = {
               userAction: {

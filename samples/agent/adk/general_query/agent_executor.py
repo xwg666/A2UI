@@ -148,16 +148,41 @@ class GeneralQueryAgentExecutor(AgentExecutor):
                 
                 # 处理字典数据
                 if isinstance(data, dict):
+                    # 打印 data 的所有键，帮助调试
+                    logger.info(f"  data 所有键: {list(data.keys())}")
+                    
                     # 检查是否为用户操作（如按钮点击）
                     if "userAction" in data:
                         ui_event_part = data["userAction"]
                         logger.info(f"  userAction type: {type(ui_event_part)}")
                         logger.info(f"  userAction: {json.dumps(ui_event_part, ensure_ascii=False) if isinstance(ui_event_part, dict) else ui_event_part}")
                         
+                        # 如果 userAction 是字典，打印所有键
+                        if isinstance(ui_event_part, dict):
+                            logger.info(f"  userAction 所有键: {list(ui_event_part.keys())}")
+                        
                         # 获取 actionName 和 context
                         # 注意：前端使用 "name" 而不是 "actionName"
                         action_name = ui_event_part.get("name") or ui_event_part.get("actionName", "unknown")
                         action_context = ui_event_part.get("context", {})
+                        
+                        # 如果 context 为空，尝试从其他字段获取
+                        if not action_context:
+                            # 尝试从 userAction 的其他字段获取数据
+                            # 例如：selectedItem, formData, data 等
+                            for field in ["selectedItem", "formData", "data", "value", "result"]:
+                                if field in ui_event_part and ui_event_part[field]:
+                                    action_context = ui_event_part[field]
+                                    logger.info(f"  从 {field} 字段获取数据: {action_context}")
+                                    break
+                        
+                        # 如果仍然没有数据，尝试从 data 的其他字段获取（不在 userAction 中的）
+                        if not action_context:
+                            for field in ["selectedItem", "formData", "data", "value", "result", "selection"]:
+                                if field in data and data[field]:
+                                    action_context = data[field]
+                                    logger.info(f"  从 data.{field} 字段获取数据: {action_context}")
+                                    break
                         
                         # 如果 actionName 为空或 None，尝试从其他字段获取
                         if not action_name or action_name == "unknown":

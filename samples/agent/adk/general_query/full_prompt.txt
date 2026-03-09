@@ -371,167 +371,6 @@ JSON 数组必须按顺序包含：
 
 ---BEGIN A2UI JSON SCHEMA---
 
-### Server To Client Schema:
-{
-  "title": "A2UI Message Schema",
-  "description": "Describes a JSON payload for an A2UI (Agent to UI) message, which is used to dynamically construct and update user interfaces. A message MUST contain exactly ONE of the action properties: 'beginRendering', 'surfaceUpdate', 'dataModelUpdate', or 'deleteSurface'.",
-  "type": "object",
-  "properties": {
-    "beginRendering": {
-      "type": "object",
-      "description": "Signals the client to begin rendering a surface with a root component and specific styles.",
-      "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The unique identifier for the UI surface to be rendered."
-        },
-        "catalogId": {
-          "type": "string",
-          "description": "The identifier of the component catalog to use for this surface. If omitted, the client MUST default to the standard catalog for this A2UI version (https://a2ui.org/specification/v0_8/standard_catalog_definition.json)."
-        },
-        "root": {
-          "type": "string",
-          "description": "The ID of the root component to render."
-        },
-        "styles": {
-          "type": "object",
-          "description": "Styling information for the UI.",
-          "additionalProperties": true
-        }
-      },
-      "required": [
-        "root",
-        "surfaceId"
-      ]
-    },
-    "surfaceUpdate": {
-      "type": "object",
-      "description": "Updates a surface with a new set of components.",
-      "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The unique identifier for the UI surface to be updated. If you are adding a new surface this *must* be a new, unique identified that has never been used for any existing surfaces shown."
-        },
-        "components": {
-          "type": "array",
-          "description": "A list containing all UI components for the surface.",
-          "minItems": 1,
-          "items": {
-            "type": "object",
-            "description": "Represents a *single* component in a UI widget tree. This component could be one of many supported types.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "The unique identifier for this component."
-              },
-              "weight": {
-                "type": "number",
-                "description": "The relative weight of this component within a Row or Column. This corresponds to the CSS 'flex-grow' property. Note: this may ONLY be set when the component is a direct descendant of a Row or Column."
-              },
-              "component": {
-                "type": "object",
-                "description": "A wrapper object that MUST contain exactly one key, which is the name of the component type. The value is an object containing the properties for that specific component.",
-                "additionalProperties": true
-              }
-            },
-            "required": [
-              "id",
-              "component"
-            ]
-          }
-        }
-      },
-      "required": [
-        "surfaceId",
-        "components"
-      ]
-    },
-    "dataModelUpdate": {
-      "type": "object",
-      "description": "Updates the data model for a surface.",
-      "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The unique identifier for the UI surface this data model update applies to."
-        },
-        "path": {
-          "type": "string",
-          "description": "An optional path to a location within the data model (e.g., '/user/name'). If omitted, or set to '/', the entire data model will be replaced."
-        },
-        "contents": {
-          "type": "array",
-          "description": "An array of data entries. Each entry must contain a 'key' and exactly one corresponding typed 'value*' property.",
-          "items": {
-            "type": "object",
-            "description": "A single data entry. Exactly one 'value*' property should be provided alongside the key.",
-            "properties": {
-              "key": {
-                "type": "string",
-                "description": "The key for this data entry."
-              },
-              "valueString": {
-                "type": "string"
-              },
-              "valueNumber": {
-                "type": "number"
-              },
-              "valueBoolean": {
-                "type": "boolean"
-              },
-              "valueMap": {
-                "description": "Represents a map as an adjacency list.",
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "description": "One entry in the map. Exactly one 'value*' property should be provided alongside the key.",
-                  "properties": {
-                    "key": {
-                      "type": "string"
-                    },
-                    "valueString": {
-                      "type": "string"
-                    },
-                    "valueNumber": {
-                      "type": "number"
-                    },
-                    "valueBoolean": {
-                      "type": "boolean"
-                    }
-                  },
-                  "required": [
-                    "key"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "key"
-            ]
-          }
-        }
-      },
-      "required": [
-        "contents",
-        "surfaceId"
-      ]
-    },
-    "deleteSurface": {
-      "type": "object",
-      "description": "Signals the client to delete the surface identified by 'surfaceId'.",
-      "properties": {
-        "surfaceId": {
-          "type": "string",
-          "description": "The unique identifier for the UI surface to be deleted."
-        }
-      },
-      "required": [
-        "surfaceId"
-      ]
-    }
-  }
-}
-
-### Catalog Schema:
 {
   "components": {
     "Text": {
@@ -539,427 +378,246 @@ JSON 数组必须按顺序包含：
       "properties": {
         "text": {
           "type": "object",
-          "description": "The text content to display. This can be a literal string or a reference to a value in the data model ('path', e.g., '/doc/title'). While simple Markdown formatting is supported (i.e. without HTML, images, or links), utilizing dedicated UI components is generally preferred for a richer and more structured presentation.",
+          "description": "要显示的文本内容。可以是字面字符串（literalString），也可以是数据模型中的引用路径（path，例如 '/doc/title'）。虽然支持简单的 Markdown 格式（不含 HTML、图片或链接），但为了更丰富和结构化的呈现，通常建议使用专用的 UI 组件。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "usageHint": {
           "type": "string",
-          "description": "A hint for the base text style. One of:\n- `h1`: Largest heading.\n- `h2`: Second largest heading.\n- `h3`: Third largest heading.\n- `h4`: Fourth largest heading.\n- `h5`: Fifth largest heading.\n- `caption`: Small text for captions.\n- `body`: Standard body text.",
-          "enum": [
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "h5",
-            "caption",
-            "body"
-          ]
+          "description": "基础文本样式的提示。可选值包括：\n- `h1`：最大标题。\n- `h2`：第二大标题。\n- `h3`：第三大标题。\n- `h4`：第四大标题。\n- `h5`：第五大标题。\n- `caption`：用于说明文字的小号字体。\n- `body`：标准正文文本。",
+          "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
         }
       },
-      "required": [
-        "text"
-      ]
+      "required": ["text"]
     },
     "Image": {
       "type": "object",
       "properties": {
         "url": {
           "type": "object",
-          "description": "The URL of the image to display. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/thumbnail/url').",
+          "description": "要显示的图片 URL。可以是字面字符串（literalString），也可以是数据模型中的引用路径（path，例如 '/thumbnail/url'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "fit": {
           "type": "string",
-          "description": "Specifies how the image should be resized to fit its container. This corresponds to the CSS 'object-fit' property.",
-          "enum": [
-            "contain",
-            "cover",
-            "fill",
-            "none",
-            "scale-down"
-          ]
+          "description": "指定图片如何调整尺寸以适应其容器，对应 CSS 的 'object-fit' 属性。",
+          "enum": ["contain", "cover", "fill", "none", "scale-down"]
         },
         "usageHint": {
           "type": "string",
-          "description": "A hint for the image size and style. One of:\n- `icon`: Small square icon.\n- `avatar`: Circular avatar image.\n- `smallFeature`: Small feature image.\n- `mediumFeature`: Medium feature image.\n- `largeFeature`: Large feature image.\n- `header`: Full-width, full bleed, header image.",
-          "enum": [
-            "icon",
-            "avatar",
-            "smallFeature",
-            "mediumFeature",
-            "largeFeature",
-            "header"
-          ]
+          "description": "图片尺寸与样式的提示。可选值包括：\n- `icon`：小型方形图标。\n- `avatar`：圆形头像。\n- `smallFeature`：小型特色图。\n- `mediumFeature`：中型特色图。\n- `largeFeature`：大型特色图。\n- `header`：全宽无边距的页眉图。",
+          "enum": ["icon", "avatar", "smallFeature", "mediumFeature", "largeFeature", "header"]
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Icon": {
       "type": "object",
       "properties": {
         "name": {
           "type": "object",
-          "description": "The name of the icon to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/form/submit').",
+          "description": "要显示的图标名称。可以是字面字符串，也可以是数据模型中的引用路径（path，例如 '/form/submit'）。",
           "properties": {
             "literalString": {
               "type": "string",
               "enum": [
-                "accountCircle",
-                "add",
-                "arrowBack",
-                "arrowForward",
-                "attachFile",
-                "calendarToday",
-                "call",
-                "camera",
-                "check",
-                "close",
-                "delete",
-                "download",
-                "edit",
-                "event",
-                "error",
-                "favorite",
-                "favoriteOff",
-                "folder",
-                "help",
-                "home",
-                "info",
-                "locationOn",
-                "lock",
-                "lockOpen",
-                "mail",
-                "menu",
-                "moreVert",
-                "moreHoriz",
-                "notificationsOff",
-                "notifications",
-                "payment",
-                "person",
-                "phone",
-                "photo",
-                "print",
-                "refresh",
-                "search",
-                "send",
-                "settings",
-                "share",
-                "shoppingCart",
-                "star",
-                "starHalf",
-                "starOff",
-                "upload",
-                "visibility",
-                "visibilityOff",
-                "warning"
+                "accountCircle", "add", "arrowBack", "arrowForward", "attachFile", "calendarToday", "call", "camera", "check", "close", "delete", "download", "edit", "event", "error", "favorite", "favoriteOff", "folder", "help", "home", "info", "locationOn", "lock", "lockOpen", "mail", "menu", "moreVert", "moreHoriz", "notificationsOff", "notifications", "payment", "person", "phone", "photo", "print", "refresh", "search", "send", "settings", "share", "shoppingCart", "star", "starHalf", "starOff", "upload", "visibility", "visibilityOff", "warning"
               ]
             },
-            "path": {
-              "type": "string"
-            }
+            "path": { "type": "string" }
           }
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": ["name"]
     },
     "Video": {
       "type": "object",
       "properties": {
         "url": {
           "type": "object",
-          "description": "The URL of the video to display. This can be a literal string or a reference to a value in the data model ('path', e.g. '/video/url').",
+          "description": "要播放的视频 URL。可以是字面字符串，也可以是数据模型中的引用路径（例如 '/video/url'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "AudioPlayer": {
       "type": "object",
       "properties": {
         "url": {
           "type": "object",
-          "description": "The URL of the audio to be played. This can be a literal string ('literal') or a reference to a value in the data model ('path', e.g. '/song/url').",
+          "description": "要播放的音频 URL。可以是字面字符串（literalString），也可以是数据模型中的引用路径（例如 '/song/url'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "description": {
           "type": "object",
-          "description": "A description of the audio, such as a title or summary. This can be a literal string or a reference to a value in the data model ('path', e.g. '/song/title').",
+          "description": "音频的描述信息，如标题或摘要。可以是字面字符串，也可以是数据模型中的引用路径（例如 '/song/title'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         }
       },
-      "required": [
-        "url"
-      ]
+      "required": ["url"]
     },
     "Row": {
       "type": "object",
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+          "description": "定义子组件。使用 'explicitList' 表示固定子组件列表，或使用 'template' 从数据列表动态生成子组件。",
           "properties": {
             "explicitList": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
             "template": {
               "type": "object",
-              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+              "description": "用于从数据模型列表动态生成子组件的模板。`componentId` 是用作模板的组件 ID，`dataBinding` 是数据模型中组件映射的路径。映射中的值将决定子组件列表。",
               "properties": {
-                "componentId": {
-                  "type": "string"
-                },
-                "dataBinding": {
-                  "type": "string"
-                }
+                "componentId": { "type": "string" },
+                "dataBinding": { "type": "string" }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (horizontally). This corresponds to the CSS 'justify-content' property.",
-          "enum": [
-            "center",
-            "end",
-            "spaceAround",
-            "spaceBetween",
-            "spaceEvenly",
-            "start"
-          ]
+          "description": "定义子组件在主轴（水平方向）上的排列方式，对应 CSS 的 'justify-content' 属性。",
+          "enum": ["center", "end", "spaceAround", "spaceBetween", "spaceEvenly", "start"]
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (vertically). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "description": "定义子组件在交叉轴（垂直方向）上的对齐方式，对应 CSS 的 'align-items' 属性。",
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Column": {
       "type": "object",
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+          "description": "定义子组件。使用 'explicitList' 表示固定子组件列表，或使用 'template' 从数据列表动态生成子组件。",
           "properties": {
             "explicitList": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
             "template": {
               "type": "object",
-              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+              "description": "用于从数据模型列表动态生成子组件的模板。`componentId` 是用作模板的组件 ID，`dataBinding` 是数据模型中组件映射的路径。映射中的值将决定子组件列表。",
               "properties": {
-                "componentId": {
-                  "type": "string"
-                },
-                "dataBinding": {
-                  "type": "string"
-                }
+                "componentId": { "type": "string" },
+                "dataBinding": { "type": "string" }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "distribution": {
           "type": "string",
-          "description": "Defines the arrangement of children along the main axis (vertically). This corresponds to the CSS 'justify-content' property.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "spaceBetween",
-            "spaceAround",
-            "spaceEvenly"
-          ]
+          "description": "定义子组件在主轴（垂直方向）上的排列方式，对应 CSS 的 'justify-content' 属性。",
+          "enum": ["start", "center", "end", "spaceBetween", "spaceAround", "spaceEvenly"]
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis (horizontally). This corresponds to the CSS 'align-items' property.",
-          "enum": [
-            "center",
-            "end",
-            "start",
-            "stretch"
-          ]
+          "description": "定义子组件在交叉轴（水平方向）上的对齐方式，对应 CSS 的 'align-items' 属性。",
+          "enum": ["center", "end", "start", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "List": {
       "type": "object",
       "properties": {
         "children": {
           "type": "object",
-          "description": "Defines the children. Use 'explicitList' for a fixed set of children, or 'template' to generate children from a data list.",
+          "description": "定义子组件。使用 'explicitList' 表示固定子组件列表，或使用 'template' 从数据列表动态生成子组件。",
           "properties": {
             "explicitList": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
             "template": {
               "type": "object",
-              "description": "A template for generating a dynamic list of children from a data model list. `componentId` is the component to use as a template, and `dataBinding` is the path to the map of components in the data model. Values in the map will define the list of children.",
+              "description": "用于从数据模型列表动态生成子组件的模板。`componentId` 是用作模板的组件 ID，`dataBinding` 是数据模型中组件映射的路径。映射中的值将决定子组件列表。",
               "properties": {
-                "componentId": {
-                  "type": "string"
-                },
-                "dataBinding": {
-                  "type": "string"
-                }
+                "componentId": { "type": "string" },
+                "dataBinding": { "type": "string" }
               },
-              "required": [
-                "componentId",
-                "dataBinding"
-              ]
+              "required": ["componentId", "dataBinding"]
             }
           }
         },
         "direction": {
           "type": "string",
-          "description": "The direction in which the list items are laid out.",
-          "enum": [
-            "vertical",
-            "horizontal"
-          ]
+          "description": "列表项的布局方向。",
+          "enum": ["vertical", "horizontal"]
         },
         "alignment": {
           "type": "string",
-          "description": "Defines the alignment of children along the cross axis.",
-          "enum": [
-            "start",
-            "center",
-            "end",
-            "stretch"
-          ]
+          "description": "定义子组件在交叉轴上的对齐方式。",
+          "enum": ["start", "center", "end", "stretch"]
         }
       },
-      "required": [
-        "children"
-      ]
+      "required": ["children"]
     },
     "Card": {
       "type": "object",
       "properties": {
         "child": {
           "type": "string",
-          "description": "The ID of the component to be rendered inside the card."
+          "description": "要在卡片内部渲染的组件 ID。"
         }
       },
-      "required": [
-        "child"
-      ]
+      "required": ["child"]
     },
     "Tabs": {
       "type": "object",
       "properties": {
         "tabItems": {
           "type": "array",
-          "description": "An array of objects, where each object defines a tab with a title and a child component.",
+          "description": "一个对象数组，每个对象定义一个标签页，包含标题和子组件。",
           "items": {
             "type": "object",
             "properties": {
               "title": {
                 "type": "object",
-                "description": "The tab title. Defines the value as either a literal value or a path to data model value (e.g. '/options/title').",
+                "description": "标签页标题。值可以是字面值，也可以是数据模型中的路径（例如 '/options/title'）。",
                 "properties": {
-                  "literalString": {
-                    "type": "string"
-                  },
-                  "path": {
-                    "type": "string"
-                  }
+                  "literalString": { "type": "string" },
+                  "path": { "type": "string" }
                 }
               },
-              "child": {
-                "type": "string"
-              }
+              "child": { "type": "string" }
             },
-            "required": [
-              "title",
-              "child"
-            ]
+            "required": ["title", "child"]
           }
         }
       },
-      "required": [
-        "tabItems"
-      ]
+      "required": ["tabItems"]
     },
     "Divider": {
       "type": "object",
       "properties": {
         "axis": {
           "type": "string",
-          "description": "The orientation of the divider.",
-          "enum": [
-            "horizontal",
-            "vertical"
-          ]
+          "description": "分隔线的方向。",
+          "enum": ["horizontal", "vertical"]
         }
       }
     },
@@ -968,254 +626,181 @@ JSON 数组必须按顺序包含：
       "properties": {
         "entryPointChild": {
           "type": "string",
-          "description": "The ID of the component that opens the modal when interacted with (e.g., a button)."
+          "description": "触发模态框打开的组件 ID（例如一个按钮）。"
         },
         "contentChild": {
           "type": "string",
-          "description": "The ID of the component to be displayed inside the modal."
+          "description": "要在模态框内显示的组件 ID。"
         }
       },
-      "required": [
-        "entryPointChild",
-        "contentChild"
-      ]
+      "required": ["entryPointChild", "contentChild"]
     },
     "Button": {
       "type": "object",
       "properties": {
         "child": {
           "type": "string",
-          "description": "The ID of the component to display in the button, typically a Text component."
+          "description": "按钮内显示的组件 ID，通常是 Text 组件。"
         },
         "primary": {
           "type": "boolean",
-          "description": "Indicates if this button should be styled as the primary action."
+          "description": "是否将此按钮设为主操作样式。"
         },
         "action": {
           "type": "object",
-          "description": "The client-side action to be dispatched when the button is clicked. It includes the action's name and an optional context payload.",
+          "description": "点击按钮时触发的客户端动作，包含动作名称和可选的上下文载荷。",
           "properties": {
-            "name": {
-              "type": "string"
-            },
+            "name": { "type": "string" },
             "context": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "key": {
-                    "type": "string"
-                  },
+                  "key": { "type": "string" },
                   "value": {
                     "type": "object",
-                    "description": "Defines the value to be included in the context as either a literal value or a path to a data model value (e.g. '/user/name').",
+                    "description": "上下文中包含的值，可以是字面值，也可以是数据模型中的路径（例如 '/user/name'）。",
                     "properties": {
-                      "path": {
-                        "type": "string"
-                      },
-                      "literalString": {
-                        "type": "string"
-                      },
-                      "literalNumber": {
-                        "type": "number"
-                      },
-                      "literalBoolean": {
-                        "type": "boolean"
-                      }
+                      "path": { "type": "string" },
+                      "literalString": { "type": "string" },
+                      "literalNumber": { "type": "number" },
+                      "literalBoolean": { "type": "boolean" }
                     }
                   }
                 },
-                "required": [
-                  "key",
-                  "value"
-                ]
+                "required": ["key", "value"]
               }
             }
           },
-          "required": [
-            "name"
-          ]
+          "required": ["name"]
         }
       },
-      "required": [
-        "child",
-        "action"
-      ]
+      "required": ["child", "action"]
     },
     "CheckBox": {
       "type": "object",
       "properties": {
         "label": {
           "type": "object",
-          "description": "The text to display next to the checkbox. Defines the value as either a literal value or a path to data model ('path', e.g. '/option/label').",
+          "description": "复选框旁显示的文本。值可以是字面值，也可以是数据模型中的路径（例如 '/option/label'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "value": {
           "type": "object",
-          "description": "The current state of the checkbox (true for checked, false for unchecked). This can be a literal boolean ('literalBoolean') or a reference to a value in the data model ('path', e.g. '/filter/open').",
+          "description": "复选框当前状态（true 为选中，false 为未选中）。可以是字面布尔值（literalBoolean），也可以是数据模型中的引用路径（例如 '/filter/open'）。",
           "properties": {
-            "literalBoolean": {
-              "type": "boolean"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalBoolean": { "type": "boolean" },
+            "path": { "type": "string" }
           }
         }
       },
-      "required": [
-        "label",
-        "value"
-      ]
+      "required": ["label", "value"]
     },
     "TextField": {
       "type": "object",
       "properties": {
         "label": {
           "type": "object",
-          "description": "The text label for the input field. This can be a literal string or a reference to a value in the data model ('path, e.g. '/user/name').",
+          "description": "输入框的标签文本。可以是字面字符串，也可以是数据模型中的引用路径（例如 '/user/name'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "text": {
           "type": "object",
-          "description": "The value of the text field. This can be a literal string or a reference to a value in the data model ('path', e.g. '/user/name').",
+          "description": "文本框的值。可以是字面字符串，也可以是数据模型中的引用路径（例如 '/user/name'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "textFieldType": {
           "type": "string",
-          "description": "The type of input field to display.",
-          "enum": [
-            "date",
-            "longText",
-            "number",
-            "shortText",
-            "obscured"
-          ]
+          "description": "输入框的类型。",
+          "enum": ["date", "longText", "number", "shortText", "obscured"]
         },
         "validationRegexp": {
           "type": "string",
-          "description": "A regular expression used for client-side validation of the input."
+          "description": "用于客户端输入验证的正则表达式。"
         }
       },
-      "required": [
-        "label"
-      ]
+      "required": ["label"]
     },
     "DateTimeInput": {
       "type": "object",
       "properties": {
         "value": {
           "type": "object",
-          "description": "The selected date and/or time value in ISO 8601 format. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/user/dob').",
+          "description": "选中的日期和/或时间值（ISO 8601 格式）。可以是字面字符串（literalString），也可以是数据模型中的引用路径（例如 '/user/dob'）。",
           "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
           }
         },
         "enableDate": {
           "type": "boolean",
-          "description": "If true, allows the user to select a date."
+          "description": "若为 true，允许用户选择日期。"
         },
         "enableTime": {
           "type": "boolean",
-          "description": "If true, allows the user to select a time."
+          "description": "若为 true，允许用户选择时间。"
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     },
     "MultipleChoice": {
       "type": "object",
-      "required": [
-        "selections",
-        "options"
-      ],
+      "required": ["selections", "options"],
       "properties": {
         "selections": {
           "type": "object",
-          "description": "The currently selected values for the component. This can be a literal array of strings or a path to an array in the data model('path', e.g. '/hotel/options').",
+          "description": "当前选中的值。可以是字符串数组（literalArray），也可以是数据模型中的数组路径（例如 '/hotel/options'）。",
           "properties": {
             "literalArray": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
-            "path": {
-              "type": "string"
-            }
+            "path": { "type": "string" }
           }
         },
         "options": {
           "type": "array",
-          "description": "An array of available options for the user to choose from.",
+          "description": "用户可选择的选项列表。",
           "items": {
             "type": "object",
             "properties": {
               "label": {
                 "type": "object",
-                "description": "The text to display for this option. This can be a literal string or a reference to a value in the data model (e.g. '/option/label').",
+                "description": "该选项显示的文本。可以是字面字符串，也可以是数据模型中的引用路径（例如 '/option/label'）。",
                 "properties": {
-                  "literalString": {
-                    "type": "string"
-                  },
-                  "path": {
-                    "type": "string"
-                  }
+                  "literalString": { "type": "string" },
+                  "path": { "type": "string" }
                 }
               },
               "value": {
                 "type": "string",
-                "description": "The value to be associated with this option when selected."
+                "description": "该选项被选中时关联的值。"
               }
             },
-            "required": [
-              "label",
-              "value"
-            ]
+            "required": ["label", "value"]
           }
         },
         "maxAllowedSelections": {
           "type": "integer",
-          "description": "The maximum number of options that the user is allowed to select."
+          "description": "用户最多可选择的选项数量。"
         },
         "variant": {
           "type": "string",
-          "description": "The display style of the component.",
-          "enum": [
-            "checkbox",
-            "chips"
-          ]
+          "description": "组件的显示样式。",
+          "enum": ["checkbox", "chips"]
         },
         "filterable": {
           "type": "boolean",
-          "description": "If true, displays a search input to filter the options."
+          "description": "若为 true，则显示搜索框以过滤选项。"
         }
       }
     },
@@ -1224,45 +809,38 @@ JSON 数组必须按顺序包含：
       "properties": {
         "value": {
           "type": "object",
-          "description": "The current value of the slider. This can be a literal number ('literalNumber') or a reference to a value in the data model ('path', e.g. '/restaurant/cost').",
+          "description": "滑块的当前值。可以是字面数字（literalNumber），也可以是数据模型中的引用路径（例如 '/restaurant/cost'）。",
           "properties": {
-            "literalNumber": {
-              "type": "number"
-            },
-            "path": {
-              "type": "string"
-            }
+            "literalNumber": { "type": "number" },
+            "path": { "type": "string" }
           }
         },
         "minValue": {
           "type": "number",
-          "description": "The minimum value of the slider."
+          "description": "滑块的最小值。"
         },
         "maxValue": {
           "type": "number",
-          "description": "The maximum value of the slider."
+          "description": "滑块的最大值。"
         }
       },
-      "required": [
-        "value"
-      ]
+      "required": ["value"]
     }
   },
   "styles": {
     "font": {
       "type": "string",
-      "description": "The primary font for the UI."
+      "description": "UI 使用的主字体。"
     },
     "primaryColor": {
       "type": "string",
-      "description": "The primary UI color as a hexadecimal code (e.g., '#00BFFF').",
+      "description": "UI 主色，以十六进制代码表示（例如 '#00BFFF'）。",
       "pattern": "^#[0-9a-fA-F]{6}$"
     }
   },
   "catalogId": "https://a2ui.org/specification/v0_8/standard_catalog_definition.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema"
 }
-
 ---END A2UI JSON SCHEMA---
 
 

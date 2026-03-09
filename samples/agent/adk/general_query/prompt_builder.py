@@ -38,6 +38,7 @@ WORKFLOW_DESCRIPTION = """
 4. **数组数据**：使用 List 组件的 `dataBinding` 绑定数组
    - 例如：`"dataBinding": "/items"`
 5. **⚠️ 禁止使用的属性**：`fit`、`usageHint`、`OptionSelect`、`Input`、`TextInput`
+6. **⚠️ 禁止使用的组件**：`FileUpload`、`VideoPlayer`、`AudioPlayer`、`WebFrame`
    - 这些属性会导致验证失败，不要在 JSON 中使用
 
 ## ⚠️ 多条数据展示必须使用 List 组件
@@ -337,104 +338,96 @@ JSON 数组必须按顺序包含三个对象：
 ### 表格形式展示（使用 Row + Column 模拟表格）
 适用于：对比数据、多字段数据、属性列表等
 
+**带边框表格** - 使用 Card 组件包裹每行：
 ```json
 [
-  {
-    "beginRendering": {
-      "surfaceId": "default",
-      "root": "root-column"
-    }
-  },
-  {
-    "surfaceUpdate": {
-      "surfaceId": "default",
-      "components": [
-        {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["header-row", "data-list"]}}}},
-        {"id": "header-row", "component": {"Row": {"children": {"explicitList": ["header-name", "header-gender", "header-age"]}}}},
-        {"id": "header-name", "component": {"Text": {"text": {"literalString": "姓名"}, "usageHint": "h4"}}},
-        {"id": "header-gender", "component": {"Text": {"text": {"literalString": "性别"}, "usageHint": "h4"}}},
-        {"id": "header-age", "component": {"Text": {"text": {"literalString": "年龄"}, "usageHint": "h4"}}},
-        {"id": "data-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "row-template", "dataBinding": "/items"}}}}},
-        {"id": "row-template", "component": {"Row": {"children": {"explicitList": ["template-name", "template-gender", "template-age"]}}}},
-        {"id": "template-name", "component": {"Text": {"text": {"path": "/姓名"}}}},
-        {"id": "template-gender", "component": {"Text": {"text": {"path": "/性别"}}}},
-        {"id": "template-age", "component": {"Text": {"text": {"path": "/年龄"}}}}
-      ]
-    }
-  },
-  {
-    "dataModelUpdate": {
-      "surfaceId": "default",
-      "path": "/",
-      "contents": [
-        {
-          "key": "items",
-          "valueMap": [
-            {"key": "item1", "valueMap": [
-              {"key": "姓名", "valueString": "张三"},
-              {"key": "性别", "valueString": "男"},
-              {"key": "年龄", "valueString": "25"}
-            ]},
-            {"key": "item2", "valueMap": [
-              {"key": "姓名", "valueString": "李四"},
-              {"key": "性别", "valueString": "女"},
-              {"key": "年龄", "valueString": "30"}
-            ]}
-          ]
-        }
-      ]
-    }
-  }
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["header-row", "data-list"]}}}},
+    {"id": "header-row", "component": {"Row": {"children": {"explicitList": ["header-name", "header-gender", "header-age"]}}}},
+    {"id": "header-name", "component": {"Text": {"text": {"literalString": "姓名"}, "style": "font-weight: bold"}}},
+    {"id": "header-gender", "component": {"Text": {"text": {"literalString": "性别"}, "style": "font-weight: bold"}}},
+    {"id": "header-age", "component": {"Text": {"text": {"literalString": "年龄"}, "style": "font-weight: bold"}}},
+    {"id": "data-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "row-card", "dataBinding": "/items"}}}}},
+    {"id": "row-card", "component": {"Card": {"child": "row-content", "style": "margin: 4px 0; padding: 8px"}}},
+    {"id": "row-content", "component": {"Row": {"children": {"explicitList": ["template-name", "template-gender", "template-age"]}}}},
+    {"id": "template-name", "component": {"Text": {"text": {"path": "/姓名"}}}},
+    {"id": "template-gender", "component": {"Text": {"text": {"path": "/性别"}}}},
+    {"id": "template-age", "component": {"Text": {"text": {"path": "/年龄"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
+    {"key": "items", "valueMap": [
+      {"key": "item1", "valueMap": [
+        {"key": "姓名", "valueString": "张三"},
+        {"key": "性别", "valueString": "男"},
+        {"key": "年龄", "valueString": "25"}
+      ]},
+      {"key": "item2", "valueMap": [
+        {"key": "姓名", "valueString": "李四"},
+        {"key": "性别", "valueString": "女"},
+        {"key": "年龄", "valueString": "30"}
+      ]}
+    ]}
+  ]}}
 ]
 ```
-
+ 
+ **简单表格（无边框）**：
+ ```json
+ [
+   {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+   {"surfaceUpdate": {"surfaceId": "default", "components": [
+     {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["header-row", "data-list"]}}}},
+     {"id": "header-row", "component": {"Row": {"children": {"explicitList": ["header-name", "header-gender", "header-age"]}}}},
+     {"id": "header-name", "component": {"Text": {"text": {"literalString": "姓名"}}}},
+     {"id": "header-gender", "component": {"Text": {"text": {"literalString": "性别"}}}},
+     {"id": "header-age", "component": {"Text": {"text": {"literalString": "年龄"}}}},
+     {"id": "data-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "row-template", "dataBinding": "/items"}}}}},
+     {"id": "row-template", "component": {"Row": {"children": {"explicitList": ["template-name", "template-gender", "template-age"]}}}},
+     {"id": "template-name", "component": {"Text": {"text": {"path": "/姓名"}}}},
+     {"id": "template-gender", "component": {"Text": {"text": {"path": "/性别"}}}},
+     {"id": "template-age", "component": {"Text": {"text": {"path": "/年龄"}}}}
+   ]}},
+   {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
+     {"key": "items", "valueMap": [
+       {"key": "item1", "valueMap": [
+         {"key": "姓名", "valueString": "张三"},
+         {"key": "性别", "valueString": "男"},
+         {"key": "年龄", "valueString": "25"}
+       ]}
+     ]}
+   ]}}
+ ]
+ ```
+ 
 ### 对比表格展示（适合产品对比、属性对比）
 ```json
 [
-  {
-    "beginRendering": {
-      "surfaceId": "default",
-      "root": "root-column"
-    }
-  },
-  {
-    "surfaceUpdate": {
-      "surfaceId": "default",
-      "components": [
-        {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["title", "compare-list"]}}}},
-        {"id": "title", "component": {"Text": {"text": {"literalString": "产品对比"}, "usageHint": "h3"}}},
-        {"id": "compare-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "compare-row-template", "dataBinding": "/items"}}}}},
-        {"id": "compare-row-template", "component": {"Card": {"child": "compare-row"}}},
-        {"id": "compare-row", "component": {"Row": {"children": {"explicitList": ["template-name", "template-price", "template-rating"]}}}},
-        {"id": "template-name", "component": {"Text": {"text": {"path": "/名称"}, "usageHint": "h4"}}},
-        {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}}}},
-        {"id": "template-rating", "component": {"Text": {"text": {"path": "/评分"}}}}
-      ]
-    }
-  },
-  {
-    "dataModelUpdate": {
-      "surfaceId": "default",
-      "path": "/",
-      "contents": [
-        {
-          "key": "items",
-          "valueMap": [
-            {"key": "item1", "valueMap": [
-              {"key": "名称", "valueString": "产品A"},
-              {"key": "价格", "valueString": "免费"},
-              {"key": "评分", "valueString": "⭐⭐⭐⭐"}
-            ]},
-            {"key": "item2", "valueMap": [
-              {"key": "名称", "valueString": "产品B"},
-              {"key": "价格", "valueString": "付费"},
-              {"key": "评分", "valueString": "⭐⭐⭐⭐⭐"}
-            ]}
-          ]
-        }
-      ]
-    }
-  }
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["title", "compare-list"]}}}},
+    {"id": "title", "component": {"Text": {"text": {"literalString": "产品对比"}}}},
+    {"id": "compare-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "compare-row", "dataBinding": "/items"}}}}},
+    {"id": "compare-row", "component": {"Card": {"child": "compare-row-content"}}},
+    {"id": "compare-row-content", "component": {"Row": {"children": {"explicitList": ["template-name", "template-price", "template-rating"]}}}},
+    {"id": "template-name", "component": {"Text": {"text": {"path": "/名称"}}}},
+    {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}}}},
+    {"id": "template-rating", "component": {"Text": {"text": {"path": "/评分"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
+    {"key": "items", "valueMap": [
+      {"key": "item1", "valueMap": [
+        {"key": "名称", "valueString": "产品A"},
+        {"key": "价格", "valueString": "免费"},
+        {"key": "评分", "valueString": "4星"}
+      ]},
+      {"key": "item2", "valueMap": [
+        {"key": "名称", "valueString": "产品B"},
+        {"key": "价格", "valueString": "付费"},
+        {"key": "评分", "valueString": "5星"}
+      ]}
+    ]}
+  ]}}
 ]
 ```
 """
