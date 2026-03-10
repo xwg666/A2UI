@@ -36,6 +36,7 @@ from prompt_builder import (
     get_form_generation_prompt,
 )
 from tools import get_data, query_data
+from test_demo import result as CHANGE_PASSWORD_A2UI
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
@@ -551,6 +552,13 @@ class GeneralQueryAgent:
         logger.info(f"=== 入参 ===")
         logger.info(f"  query: {query}")
         logger.info(f"  session_id: {session_id}")
+        
+        # 检查是否是修改密码场景
+        if "修改密码" in query or "修改账户密码" in query or "改密码" in query:
+            logger.info("=== 检测到修改密码场景，直接返回固定 A2UI ===")
+            a2ui_json = json.dumps(CHANGE_PASSWORD_A2UI, ensure_ascii=False)
+            yield {"is_task_complete": True, "content": f"请在下面的列表中勾选您需要修改密码的账号---a2ui_JSON---{a2ui_json}"}
+            return
         
         # 检查是否需要生成必填参数表单
         # 两种情况需要处理：1. 包含"必填参数"标记  2. 表单提交（用户已填写部分参数）
