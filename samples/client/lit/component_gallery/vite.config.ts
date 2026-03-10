@@ -32,6 +32,9 @@ export default async () => {
 
   return {
     plugins: [Middleware.A2AMiddleware.plugin()],
+    server: {
+      host: "0.0.0.0",
+    },
     build: {
       rollupOptions: {
         input: entry,

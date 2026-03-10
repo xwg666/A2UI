@@ -60,14 +60,19 @@ def _load_basic_component(version: str, spec_name: str) -> Dict:
   path = spec_map.get(spec_name)
   filename = os.path.basename(path)
 
-  # 1. Try to load from package resources
+  # 1. Try to load from installed package assets using FileSystemLoader
+  # Note: We don't use PackageLoader because version directories (e.g., "0.8")
+  # are not valid Python package names (no __init__.py and contain dots)
   try:
-    loader = PackageLoader(f"{A2UI_ASSET_PACKAGE}.{version}")
-    return loader.load(filename)
-  except IOError as e:
-    logging.debug("Could not load schema '%s' from package: %s", filename, e)
+    import a2ui
+    package_assets_path = os.path.join(os.path.dirname(a2ui.__file__), "assets", version)
+    if os.path.exists(os.path.join(package_assets_path, filename)):
+      loader = FileSystemLoader(package_assets_path)
+      return loader.load(filename)
+  except Exception as e:
+    logging.debug("Could not load schema '%s' from package assets: %s", filename, e)
 
-  # 2. Fallback: Local Assets
+  # 2. Fallback: Local Assets (development mode)
   # This handles cases where assets might be present in src but not installed
   try:
     potential_path = os.path.abspath(

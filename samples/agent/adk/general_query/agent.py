@@ -130,6 +130,7 @@ class GeneralQueryAgent:
             LlmAgent: 配置好的 LLM Agent 实例
         """
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "dashscope/qwen-turbo")
+        DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
 
         instruction = get_ui_prompt() if self.use_ui else get_text_prompt()
         logger.info(f"提示词: {instruction[:200]}...")
