@@ -46,7 +46,7 @@ export const config: AppConfig = {
     light-dark(#f0f4f8, #0f172a) 0%,
     light-dark(#e2e8f0, #1e293b) 100%
   )`,
-  placeholder: "张三、火锅、VPN",
+  placeholder: "",
   loadingText: [
     "Finding the best spots for you...",
     "Checking reviews...",

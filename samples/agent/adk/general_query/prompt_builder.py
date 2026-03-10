@@ -443,6 +443,85 @@ def get_text_prompt() -> str:
 """
 
 
+def get_check_params_prompt(query: str) -> str:
+    """
+    生成检查必填参数的 prompt
+    
+    Args:
+        query: 用户查询
+        
+    Returns:
+        str: 用于 LLM 判断必填参数的 prompt
+    """
+    return f"""分析用户问题，判断是否缺少必填参数。
+
+用户问题：{query}
+
+判断规则：
+1. 如果问题中已经包含具体的人名（如"张三"、"李四"），则 name 参数已提供
+2. 如果问题是通用查询（如"账号密码是多少"、"查询员工信息"），则缺少 name 参数
+3. 只返回真正缺少的参数，不要返回已提供的参数
+
+返回 JSON 格式：
+{{"missing_params": ["缺少的参数"], "need_more_info": true/false}}
+
+示例：
+- "张三的账号密码是多少？" → {{"missing_params": [], "need_more_info": false}}  （已有姓名）
+- "账号密码是多少？" → {{"missing_params": ["name"], "need_more_info": true}}  （缺少姓名）
+- "查询员工信息" → {{"missing_params": ["name"], "need_more_info": true}}  （缺少姓名）
+- "查询张三的工资" → {{"missing_params": [], "need_more_info": false}}  （已有姓名）
+- "李四的电话是多少" → {{"missing_params": [], "need_more_info": false}}  （已有姓名）
+
+只返回 JSON，不要其他内容。"""
+
+
+def get_form_generation_prompt(query: str, required_params: list[str], filled_info: str = "") -> str:
+    """
+    生成表单 UI 的 prompt
+    
+    Args:
+        query: 用户原始查询
+        required_params: 必填参数列表
+        filled_info: 已填写参数的信息（可选）
+        
+    Returns:
+        str: 用于 LLM 生成表单 UI 的 prompt
+    """
+    return f"""用户询问：{query}
+
+必填参数列表：{required_params}
+{filled_info}
+请生成一个 A2UI 表单界面，让用户填写参数。
+
+响应格式：文本---a2ui_JSON---[JSON数组]
+
+要求：
+1. 必须生成 3 条消息（beginRendering, surfaceUpdate, dataModelUpdate）
+2. ⚠️ 重要：在表单顶部添加一个提示文本组件，显示"⚠️ 所有参数必填，请完整填写"
+3. 每个参数使用 TextField 组件，标签使用中文
+4. ⚠️ 重要：已填写的参数需要在 TextField 中显示当前值（通过 value 绑定）
+5. 添加一个提交按钮，action.name 为 "submit_form"
+6. ⚠️ 重要：button 的 context 必须是数组格式，包含所有必填参数：
+   - 格式：[{{"key": "字段名", "value": {{"path": "/formData/字段名"}}}}]
+   - 必须包含所有必填参数，不只是未填写的
+   - 例如：context: [{{"key": "name", "value": {{"path": "/formData/name"}}}}, {{"key": "age", "value": {{"path": "/formData/age"}}}}]
+7. dataModelUpdate 中初始化数据，路径为 /formData，包含所有参数（已填写的显示值，未填写的为空字符串）
+
+参数中文映射：
+- name → 姓名
+- age → 年龄  
+- sex/gender → 性别
+- phone → 电话
+- email → 邮箱
+
+示例结构：
+- root-column 包含：提示文本、name-field、email-field、submit-button
+- 提示文本显示"⚠️ 所有参数必填，请完整填写"
+- name 的 TextField 显示已填写的值
+- email 的 TextField 显示空
+- context 包含 name 和 email 两个参数"""
+
+
 def generate_full_prompt():
     return A2uiSchemaManager(
         "0.8",
