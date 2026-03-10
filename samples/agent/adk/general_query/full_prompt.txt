@@ -240,9 +240,13 @@ JSON 数组必须按顺序包含：
         {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["item-list"]}}}},
         {"id": "item-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "item-card-template", "dataBinding": "/items"}}}}},
         {"id": "item-card-template", "component": {"Card": {"child": "card-layout"}}},
-        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["template-name", "template-price", "template-image"]}}}},
-        {"id": "template-name", "component": {"Text": {"text": {"path": "/菜品名称"}}}},
-        {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}}}},
+        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["name-row", "price-row", "template-image"]}}}},
+        {"id": "name-row", "component": {"Row": {"children": {"explicitList": ["name-label", "template-name"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "name-label", "component": {"Text": {"text": {"literalString": "菜品："}, "usageHint": "body"}}},
+        {"id": "template-name", "component": {"Text": {"text": {"path": "/菜品名称"}, "usageHint": "h4"}}},
+        {"id": "price-row", "component": {"Row": {"children": {"explicitList": ["price-label", "template-price"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "price-label", "component": {"Text": {"text": {"literalString": "价格："}, "usageHint": "body"}}},
+        {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}, "usageHint": "h4"}}},
         {"id": "template-image", "component": {"Image": {"url": {"path": "/图片"}}}}
       ]
     }
@@ -285,9 +289,13 @@ JSON 数组必须按顺序包含：
         {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["item-list"]}}}},
         {"id": "item-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "item-card-template", "dataBinding": "/items"}}}}},
         {"id": "item-card-template", "component": {"Card": {"child": "card-layout"}}},
-        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["template-name", "template-job"]}}}},
-        {"id": "template-name", "component": {"Text": {"text": {"path": "/姓名"}}}},
-        {"id": "template-job", "component": {"Text": {"text": {"path": "/职位"}}}}
+        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["name-row", "job-row"]}}}},
+        {"id": "name-row", "component": {"Row": {"children": {"explicitList": ["name-label", "template-name"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "name-label", "component": {"Text": {"text": {"literalString": "姓名："}, "usageHint": "body"}}},
+        {"id": "template-name", "component": {"Text": {"text": {"path": "/姓名"}, "usageHint": "h4"}}},
+        {"id": "job-row", "component": {"Row": {"children": {"explicitList": ["job-label", "template-job"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "job-label", "component": {"Text": {"text": {"literalString": "职位："}, "usageHint": "body"}}},
+        {"id": "template-job", "component": {"Text": {"text": {"path": "/职位"}, "usageHint": "h4"}}}
       ]
     }
   },
@@ -328,9 +336,13 @@ JSON 数组必须按顺序包含：
         {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["item-list"]}}}},
         {"id": "item-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "item-card-template", "dataBinding": "/items"}}}}},
         {"id": "item-card-template", "component": {"Card": {"child": "card-layout"}}},
-        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["template-name", "template-price", "template-image"]}}}},
-        {"id": "template-name", "component": {"Text": {"text": {"path": "/商品名称"}}}},
-        {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}}}},
+        {"id": "card-layout", "component": {"Column": {"children": {"explicitList": ["name-row", "price-row", "template-image"]}}}},
+        {"id": "name-row", "component": {"Row": {"children": {"explicitList": ["name-label", "template-name"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "name-label", "component": {"Text": {"text": {"literalString": "商品："}, "usageHint": "body"}}},
+        {"id": "template-name", "component": {"Text": {"text": {"path": "/商品名称"}, "usageHint": "h4"}}},
+        {"id": "price-row", "component": {"Row": {"children": {"explicitList": ["price-label", "template-price"]}, "distribution": "start", "alignment": "center"}}},
+        {"id": "price-label", "component": {"Text": {"text": {"literalString": "价格："}, "usageHint": "body"}}},
+        {"id": "template-price", "component": {"Text": {"text": {"path": "/价格"}, "usageHint": "h4"}}},
         {"id": "template-image", "component": {"Image": {"url": {"path": "/图片"}}}}
       ]
     }

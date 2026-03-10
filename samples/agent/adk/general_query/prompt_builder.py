@@ -68,9 +68,14 @@ WORKFLOW_DESCRIPTION = """
     {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["item-list"]}}}},
     {"id": "item-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "item-card", "dataBinding": "/items"}}}}},
     {"id": "item-card", "component": {"Card": {"child": "card-content"}}},
-    {"id": "card-content", "component": {"Column": {"children": {"explicitList": ["name-text", "price-text"]}}}},
-    {"id": "name-text", "component": {"Text": {"text": {"path": "/商品名称"}}}},
-    {"id": "price-text", "component": {"Text": {"text": {"path": "/价格"}}}}
+    {"id": "card-content", "component": {"Column": {"children": {"explicitList": ["name-row", "price-row"]}}}},
+    // 每行使用 Row 组件，左侧显示 label，右侧显示 value
+    {"id": "name-row", "component": {"Row": {"children": {"explicitList": ["name-label", "name-value"]}, "distribution": "start", "alignment": "center"}}},
+    {"id": "name-label", "component": {"Text": {"text": {"literalString": "商品名称："}, "usageHint": "body"}}},
+    {"id": "name-value", "component": {"Text": {"text": {"path": "/商品名称"}, "usageHint": "h4"}}},
+    {"id": "price-row", "component": {"Row": {"children": {"explicitList": ["price-label", "price-value"]}, "distribution": "start", "alignment": "center"}}},
+    {"id": "price-label", "component": {"Text": {"text": {"literalString": "价格："}, "usageHint": "body"}}},
+    {"id": "price-value", "component": {"Text": {"text": {"path": "/价格"}, "usageHint": "h4"}}}
   ]}},
   {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
     {"key": "items", "valueMap": [
@@ -171,6 +176,42 @@ JSON 数组必须按顺序包含三个对象：
 - `path`: 数据路径
 - `contents`: 数据内容
 - `valueMap`: 键值对映射
+
+## 重要：数据路径绑定规则
+
+组件中的 `path` 必须与 dataModelUpdate 中的数据路径完全匹配：
+
+**示例 1 - 数据在根路径：**
+```json
+// dataModelUpdate
+{"path": "/", "contents": [{"key": "姓名", "valueString": "张三"}]}
+
+// 组件绑定
+{"path": "/姓名"}
+```
+
+**示例 2 - 数据在 items 下（使用 List template）：**
+```json
+// dataModelUpdate
+{"path": "/", "contents": [{"key": "items", "valueMap": [...]}]}
+
+// List 组件
+dataBinding: "/items"
+
+// template 中的组件绑定（相对路径）
+{"path": "/姓名"}  // 实际解析为 /items/itemX/姓名
+```
+
+**示例 3 - 数据在 items/item1 下（静态展示）：**
+```json
+// dataModelUpdate
+{"path": "/", "contents": [{"key": "items", "valueMap": [{"key": "item1", "valueMap": [...]}]}]}
+
+// 静态组件绑定（必须使用完整路径）
+{"path": "/items/item1/姓名"}
+```
+
+⚠️ **常见错误**：如果使用静态组件（不用 List template），但数据放在 items/item1 下，组件 path 必须用完整路径 `/items/item1/xxx`，不能用 `/xxx`。
 
 ## 组件属性
 
@@ -514,12 +555,20 @@ def get_form_generation_prompt(query: str, required_params: list[str], filled_in
 - phone → 电话
 - email → 邮箱
 
-示例结构：
+重要规则：
+- 只生成必填参数列表中指定的字段，不要额外添加其他字段
+- 如果必填参数只有 ["name"]，则只生成 name 字段，不要生成 email 字段
+
+示例结构（假设必填参数为 ["name", "email"]）：
 - root-column 包含：提示文本、name-field、email-field、submit-button
 - 提示文本显示"⚠️ 所有参数必填，请完整填写"
 - name 的 TextField 显示已填写的值
 - email 的 TextField 显示空
-- context 包含 name 和 email 两个参数"""
+- context 包含 name 和 email 两个参数
+
+如果必填参数只有 ["name"]，则只生成：
+- root-column 包含：提示文本、name-field、submit-button
+- context 只包含 name 一个参数"""
 
 
 def generate_full_prompt():
