@@ -756,6 +756,29 @@
       "required": [
         "value"
       ]
+    },
+    "Table": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "headers": {
+          "type": "array",
+          "description": "Table header row.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "description": "Table data rows.",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "styles": {

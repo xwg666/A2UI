@@ -145,12 +145,61 @@ JSON 数组必须按顺序包含：
 1. **卡片列表**（默认）：适合有图片、描述性文字的数据
    - 菜品、商品、人员信息等
 
-2. **表格形式**：适合对比数据、多字段属性数据
+2. **表格形式（Table）**：⚠️ 优先选择！适合对比数据、多字段属性数据
    - 产品对比、属性列表、多列数据
-   - 使用 Row 组件作为表头和数据行
-   - 表头使用 `literalString`，数据行使用 `path` 绑定
+   - 使用 Table 组件，设置 headers 和 rows 属性
+   - headers 是表头数组，rows 是二维数组（每行是单元格数组）
+   - ⚠️ Table 组件的 rows 必须使用静态字符串，不支持 path 数据绑定
+   - 示例：`"rows": [["张三", "程序员"], ["李四", "设计师"]]`
 
 3. **纯文本**：适合单条简单数据或提示信息
+
+4. **动态表格（List + Row）**：仅当数据必须从 dataModelUpdate 动态绑定时使用
+   - 使用 List 组件的 dataBinding 绑定数据
+   - 表头使用 `literalString`，数据行使用 `path` 绑定
+
+**完整示例 1 - 静态表格数据：**
+```json
+[
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["data-table"]}}}},
+    {"id": "data-table", "component": {"Table": {
+      "headers": ["姓名", "职位", "账号到期时间"],
+      "rows": [
+        ["张三", "程序员", "2025-12-31"],
+        ["李四", "设计师", "2025-06-30"]
+      ]
+    }}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": []}}
+]
+```
+
+**完整示例 2 - 动态数据表格（使用 List + Row）：**
+```json
+[
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {"children": {"explicitList": ["header-row", "data-list"]}}}},
+    {"id": "header-row", "component": {"Row": {"children": {"explicitList": ["h1", "h2", "h3"]}}}},
+    {"id": "h1", "component": {"Text": {"text": {"literalString": "姓名"}}}},
+    {"id": "h2", "component": {"Text": {"text": {"literalString": "职位"}}}},
+    {"id": "h3", "component": {"Text": {"text": {"literalString": "到期时间"}}}},
+    {"id": "data-list", "component": {"List": {"direction": "vertical", "children": {"template": {"componentId": "row-template", "dataBinding": "/items"}}}}},
+    {"id": "row-template", "component": {"Row": {"children": {"explicitList": ["c1", "c2", "c3"]}}}},
+    {"id": "c1", "component": {"Text": {"text": {"path": "/姓名"}}}},
+    {"id": "c2", "component": {"Text": {"text": {"path": "/职位"}}}},
+    {"id": "c3", "component": {"Text": {"text": {"path": "/到期时间"}}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
+    {"key": "items", "valueMap": [
+      {"key": "item1", "valueMap": [{"key": "姓名", "valueString": "张三"}, {"key": "职位", "valueString": "程序员"}, {"key": "到期时间", "valueString": "2025-12-31"}]},
+      {"key": "item2", "valueMap": [{"key": "姓名", "valueString": "李四"}, {"key": "职位", "valueString": "设计师"}, {"key": "到期时间", "valueString": "2025-06-30"}]}
+    ]}
+  ]}}
+]
+```
 """
 
 UI_DESCRIPTION = """
@@ -170,6 +219,11 @@ JSON 数组必须按顺序包含三个对象：
 - 卡片容器（Card）
 - 文本组件（Text）
 - 图片组件（Image）
+- 行布局组件（Row）
+- 列布局组件（Column）
+- 组件容器（Container）
+- 表单组件（Form）
+- 表格组件（Table）
 
 ### 3. dataModelUpdate
 绑定数据到组件：
@@ -572,7 +626,7 @@ def get_form_generation_prompt(query: str, required_params: list[str], filled_in
 
 
 def generate_full_prompt():
-    return A2uiSchemaManager(
+    prompt = A2uiSchemaManager(
         "0.8",
         basic_examples_path="../general_query/examples/",
         schema_modifiers=[remove_strict_validation],
@@ -584,8 +638,59 @@ def generate_full_prompt():
         include_examples=True,
         validate_examples=False,
     )
+    
+    # 在 schema 后添加中文说明
+    schema_section = "---BEGIN A2UI JSON SCHEMA---"
+    end_schema_section = "---END A2UI JSON SCHEMA---"
+    
+    if schema_section in prompt and end_schema_section in prompt:
+        # 找到 schema 部分的结束位置
+        end_idx = prompt.find(end_schema_section) + len(end_schema_section)
+        
+        # 添加中文组件说明
+        chinese_component_guide = """
+
+## 📋 A2UI 组件中文说明
+
+### 布局组件
+- **Column**: 垂直布局容器，子组件从上到下排列
+- **Row**: 水平布局容器，子组件从左到右排列
+- **List**: 列表容器，支持垂直或水平方向，可用于展示多条数据
+- **Card**: 卡片容器，用于包裹内容形成卡片样式
+
+### 内容组件
+- **Text**: 文本组件，显示文字内容
+  - `text.literalString`: 固定文本
+  - `text.path`: 数据绑定路径（如 "/姓名"）
+  - `usageHint`: 文本样式（h1-h5, body, caption）
+- **Image**: 图片组件
+  - `url.literalString`: 固定图片 URL
+  - `url.path`: 数据绑定路径
+- **Table**: 表格组件（带边框）⭐
+  - `headers`: 表头数组，如 ["姓名", "职位", "到期时间"]
+  - `rows`: 二维数组，每行是一个单元格数组，如 [["张三", "程序员", "2025-12-31"]]
+  - ⚠️ 注意：Table 组件的 rows 必须使用静态字符串，不支持数据绑定
+
+### 表单组件
+- **TextField**: 文本输入框
+- **MultipleChoice**: 多选/单选组件
+- **Slider**: 滑块输入
+- **DateTimeInput**: 日期时间选择器
+
+### 使用建议
+1. 展示多条数据时，优先使用 **List + Row** 组合
+2. 静态对比数据使用 **Table** 组件（带边框）
+3. 表头使用 `literalString`，数据绑定使用 `path`
+"""
+        
+        # 插入中文说明
+        prompt = prompt[:end_idx] + chinese_component_guide + prompt[end_idx:]
+    
+    return prompt
 
 
 if __name__ == "__main__":
     full_prompt = generate_full_prompt()
+    with open("prompt.txt", "w",encoding='utf-8') as f:  # noqa: SIM115
+        f.write(full_prompt)
     print(full_prompt)

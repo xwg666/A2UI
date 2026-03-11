@@ -211,3 +211,8 @@ export interface Slider {
   minValue?: number;
   maxValue?: number;
 }
+
+export interface Table {
+  headers?: string[];
+  rows?: string[][];
+}

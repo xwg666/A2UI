@@ -33,6 +33,7 @@ import {
   Text,
   TextField,
   Video,
+  Table,
 } from "./components";
 import { StringValue } from "./primitives";
 
@@ -129,6 +130,7 @@ export declare type Theme = {
       label: Record<string, boolean>;
     };
     Video: Record<string, boolean>;
+    Table: Record<string, boolean>;
   };
   elements: {
     a: Record<string, boolean>;
@@ -191,6 +193,7 @@ export declare type Theme = {
         };
     TextField?: Record<string, string>;
     Video?: Record<string, string>;
+    Table?: Record<string, string>;
   };
 };
 
@@ -397,6 +400,16 @@ export declare interface CheckboxNode extends BaseComponentNode {
   properties: ResolvedCheckbox;
 }
 
+export interface TableProperties {
+  headers?: string[];
+  rows?: string[][];
+}
+
+export declare interface TableNode extends BaseComponentNode {
+  type: "Table";
+  properties: TableProperties;
+}
+
 export declare interface TextFieldNode extends BaseComponentNode {
   type: "TextField";
   properties: ResolvedTextField;
@@ -446,6 +459,7 @@ export declare type AnyComponentNode =
   | DateTimeInputNode
   | MultipleChoiceNode
   | SliderNode
+  | TableNode
   | CustomNode;
 
 // These components do not contain other components can reuse their
@@ -461,6 +475,7 @@ export declare type ResolvedTextField = TextField;
 export declare type ResolvedDateTimeInput = DateTimeInput;
 export declare type ResolvedMultipleChoice = MultipleChoice;
 export declare type ResolvedSlider = Slider;
+export declare type ResolvedTable = TableProperties;
 
 export declare interface ResolvedRow {
   children: AnyComponentNode[];

@@ -408,6 +408,22 @@ export class Root extends SignalWatcher(LitElement) {
           ></a2ui-slider>`;
         }
 
+        case "Table": {
+          const node = component as NodeOfType<"Table">;
+          return html`<a2ui-table
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .dataContextPath=${node.dataContextPath}
+            .headers=${node.properties.headers ?? []}
+            .rows=${node.properties.rows ?? []}
+            .enableCustomElements=${this.enableCustomElements}
+          ></a2ui-table>`;
+        }
+
         case "TextField": {
           // TODO: type and validationRegexp.
           const node = component as NodeOfType<"TextField">;

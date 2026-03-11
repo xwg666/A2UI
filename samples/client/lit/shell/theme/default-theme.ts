@@ -408,6 +408,7 @@ export const theme: v0_8.Types.Theme = {
       "border-br-5": true,
       "layout-el-cv": true,
     },
+    Table: {},
   },
   elements: {
     a: aLight,
