@@ -1395,7 +1395,7 @@ dataBinding: "/items"
           "enum": [
             "checkbox",
             "chips",
-            "radio"
+            "dropdown"
           ]
         },
         "filterable": {
@@ -1495,9 +1495,12 @@ dataBinding: "/items"
 - **MultipleChoice**: 多选/单选组件
   - `selections`: 选中项绑定
   - `options`: 选项数组
-  - `variant`: 样式 ("checkbox" 或 "chips")
+  - `variant`: 样式 ("checkbox" | "chips" | "dropdown")
+    - `"dropdown"` - 下拉选择框（推荐用于单选）
+    - `"chips"` - 标签选择
+    - `"checkbox"` - 复选框列表
   - `maxAllowedSelections`: 最大可选数量
-    - 设置为 1 = 单选（单选框效果）⚠️
+    - 设置为 1 = 单选
 - **Slider**: 滑块输入
 - **DateTimeInput**: 日期时间选择器
 - **CheckBox**: 复选框/单选框

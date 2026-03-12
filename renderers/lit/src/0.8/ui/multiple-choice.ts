@@ -37,7 +37,7 @@ export class MultipleChoice extends Root {
   accessor selections: Primitives.StringValue | string[] = [];
 
   @property()
-  accessor variant: "checkbox" | "chips" = "checkbox";
+  accessor variant: "checkbox" | "chips" | "dropdown" = "checkbox";
 
   @property({ type: Boolean })
   accessor filterable = false;
@@ -381,6 +381,60 @@ export class MultipleChoice extends Root {
              ${filteredOptions.length === 0 ? html`<div style="padding: 8px; font-style: italic; color: var(--md-sys-color-outline);">No options found</div>` : nothing}
           </div>
         `;
+    }
+
+    // Dropdown Layout (single select)
+    if (this.variant === "dropdown") {
+      const selectedOption = filteredOptions.find(opt => currentSelections.includes(opt.value));
+      const headerText = selectedOption
+        ? extractStringValue(selectedOption.label, this.component, this.processor, this.surfaceId)
+        : (this.description ?? "Select an option");
+
+      return html`
+        <div class="container">
+          <div 
+            class="dropdown-header" 
+            @click=${() => this.isOpen = !this.isOpen}
+          >
+            <span class="header-text">${headerText}</span>
+            <span class="chevron ${this.isOpen ? "open" : ""}">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/>
+              </svg>
+            </span>
+          </div>
+
+          <div class="dropdown-wrapper ${this.isOpen ? "open" : ""}">
+            ${this.filterable ? this.#renderFilter() : nothing}
+            <div class="options-scroll-container">
+              ${filteredOptions.map((option) => {
+                const label = extractStringValue(
+                  option.label,
+                  this.component,
+                  this.processor,
+                  this.surfaceId
+                );
+                const isSelected = currentSelections.includes(option.value);
+
+                return html`
+                  <div 
+                    class="option-item ${isSelected ? "selected" : ""}"
+                    @click=${(e: Event) => {
+                    e.stopPropagation();
+                    this.toggleSelection(option.value);
+                    this.isOpen = false;
+                  }}
+                  >
+                    <span>${label}</span>
+                    ${isSelected ? html`<span style="margin-left: auto; color: var(--md-sys-color-primary);">✓</span>` : nothing}
+                  </div>
+                `;
+              })}
+               ${filteredOptions.length === 0 ? html`<div style="padding: 16px; text-align: center; color: var(--md-sys-color-outline);">No options found</div>` : nothing}
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // Default Checkbox Dropdown Layout

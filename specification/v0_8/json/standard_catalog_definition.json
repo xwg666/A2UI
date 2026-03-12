@@ -718,7 +718,8 @@
           "description": "The display style of the component.",
           "enum": [
             "checkbox",
-            "chips"
+            "chips",
+            "dropdown"
           ]
         },
         "filterable": {

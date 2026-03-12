@@ -150,28 +150,45 @@ export class FileUpload extends Root {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this._selectedFiles = Array.from(input.files);
-      this.#notifyFileChange();
+      // 将文件信息写入 data model
+      this.#updateDataModel();
     }
-  }
-
-  #notifyFileChange() {
-    if (!this.action) {
-      return;
-    }
-    const fileNames = this._selectedFiles.map((f) => f.name).join(", ");
-    const evt = new StateEvent<"a2ui.action">({
-      eventType: "a2ui.action",
-      action: this.action,
-      dataContextPath: this.dataContextPath,
-      sourceComponentId: this.id,
-      sourceComponent: this.component,
-    });
-    this.dispatchEvent(evt);
   }
 
   #removeFile(index: number) {
     this._selectedFiles = this._selectedFiles.filter((_, i) => i !== index);
-    this.#notifyFileChange();
+    this.#updateDataModel();
+  }
+
+  #updateDataModel() {
+    if (!this.processor) {
+      return;
+    }
+
+    // 构建文件信息数组
+    const fileInfos = this._selectedFiles.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    }));
+
+    // 写入 data model
+    // 使用 dataContextPath 作为路径，默认为 /files
+    const surfaceId = this.surfaceId || "default";
+    const path = this.dataContextPath || "/files";
+
+    console.log("[FileUpload] Updating data model:", { path, fileInfos });
+
+    // 直接通过 processor 更新数据
+    (this.processor as any).setDataByPath(
+      (this.processor as any).getOrCreateSurface(surfaceId).dataModel,
+      path,
+      fileInfos.length === 1 ? fileInfos[0] : fileInfos
+    );
+
+    // 触发重建以更新 UI
+    (this.processor as any).rebuildComponentTree((this.processor as any).getOrCreateSurface(surfaceId));
   }
 
   #renderFileList() {

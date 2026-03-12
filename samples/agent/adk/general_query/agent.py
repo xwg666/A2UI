@@ -578,7 +578,42 @@ class GeneralQueryAgent:
         # 检查是否需要生成必填参数表单
         # 两种情况需要处理：1. 包含"必填参数"标记  2. 表单提交（用户已填写部分参数）
         is_form_submit = "User submitted: submit_form" in query
+        is_navigate = "User submitted: navigate" in query
         has_required_params_mark = '必填参数' in query
+        
+        # 检查是否是空数据提交
+        if is_form_submit or is_navigate:
+            form_data_match = re.search(r"data:\s*(\{.*\})", query, re.DOTALL)
+            if form_data_match:
+                try:
+                    data_str = form_data_match.group(1)
+                    import ast
+                    try:
+                        submit_data = json.loads(data_str.replace("'", '"'))
+                    except json.JSONDecodeError:
+                        submit_data = ast.literal_eval(data_str)
+                    
+                    # 检查数据是否为空
+                    is_empty = True
+                    if isinstance(submit_data, dict):
+                        for key, value in submit_data.items():
+                            if isinstance(value, dict):
+                                if value:  # 字典不为空
+                                    is_empty = False
+                                    break
+                            elif value:  # 其他类型有值
+                                is_empty = False
+                                break
+                    
+                    if is_empty:
+                        logger.info("=== 检测到空数据提交，返回提示 ===")
+                        yield {
+                            "is_task_complete": True,
+                            "content": "没有发送数据"
+                        }
+                        return
+                except Exception as e:
+                    logger.warning(f"  解析提交数据失败: {e}")
         
         if has_required_params_mark or is_form_submit:
             logger.info(f"=== 检测到必填参数场景（标记:{has_required_params_mark}, 表单提交:{is_form_submit}）===")

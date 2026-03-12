@@ -28,6 +28,9 @@ export class Button extends Root {
   @property()
   accessor action: Types.Action | null = null;
 
+  @property({ type: Boolean })
+  accessor primary: boolean = false;
+
   static styles = [
     structuralStyles,
     css`
@@ -40,8 +43,13 @@ export class Button extends Root {
   ];
 
   render() {
+    const buttonClasses = {
+      ...this.theme.components.Button,
+      ...(this.primary ? { "button-primary": true } : {}),
+    };
+
     return html`<button
-      class=${classMap(this.theme.components.Button)}
+      class=${classMap(buttonClasses)}
       style=${this.theme.additionalStyles?.Button
         ? styleMap(this.theme.additionalStyles?.Button)
         : nothing}

@@ -520,7 +520,8 @@ export declare interface ResolvedColumn {
 
 export declare interface ResolvedButton {
   child: AnyComponentNode;
-  action: Button["action"];
+  primary?: boolean;
+  action?: Button["action"];
 }
 
 export declare interface ResolvedList {

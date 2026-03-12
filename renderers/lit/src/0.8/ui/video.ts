@@ -50,17 +50,29 @@ export class Video extends Root {
   ];
 
   #renderVideo() {
+    console.log("[Video] Rendering with url:", this.url);
+    
     if (!this.url) {
+      console.log("[Video] No URL provided");
       return nothing;
     }
 
     if (this.url && typeof this.url === "object") {
-      if ("literalString" in this.url) {
-        return html`<video controls src=${this.url.literalString} />`;
-      } else if ("literal" in this.url) {
-        return html`<video controls src=${this.url.literal} />`;
-      } else if (this.url && "path" in this.url && this.url.path) {
+      if ("literalString" in this.url && this.url.literalString) {
+        console.log("[Video] Using literalString:", this.url.literalString);
+        return html`<video controls style="width:100%;max-width:100%;">
+          <source src=${this.url.literalString} type="video/mp4" />
+          您的浏览器不支持视频播放。
+        </video>`;
+      } else if ("literal" in this.url && this.url.literal) {
+        console.log("[Video] Using literal:", this.url.literal);
+        return html`<video controls style="width:100%;max-width:100%;">
+          <source src=${this.url.literal} type="video/mp4" />
+          您的浏览器不支持视频播放。
+        </video>`;
+      } else if ("path" in this.url && this.url.path) {
         if (!this.processor || !this.component) {
+          console.log("[Video] No processor or component");
           return html`(no processor)`;
         }
 
@@ -69,6 +81,8 @@ export class Video extends Root {
           this.url.path,
           this.surfaceId ?? A2uiMessageProcessor.DEFAULT_SURFACE_ID
         );
+        console.log("[Video] Resolved URL from path:", videoUrl);
+        
         if (!videoUrl) {
           return html`Invalid video URL`;
         }
@@ -76,10 +90,14 @@ export class Video extends Root {
         if (typeof videoUrl !== "string") {
           return html`Invalid video URL`;
         }
-        return html`<video controls src=${videoUrl} />`;
+        return html`<video controls style="width:100%;max-width:100%;">
+          <source src=${videoUrl} type="video/mp4" />
+          您的浏览器不支持视频播放。
+        </video>`;
       }
     }
 
+    console.log("[Video] Unhandled URL format:", this.url);
     return html`(empty)`;
   }
 

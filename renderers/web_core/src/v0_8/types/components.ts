@@ -135,9 +135,14 @@ export interface Button {
   child: string;
 
   /**
+   * Indicates if this button should be styled as the primary action.
+   */
+  primary?: boolean;
+
+  /**
    * Represents a user-initiated action.
    */
-  action: Action;
+  action?: Action;
 }
 
 export interface Checkbox {
@@ -196,7 +201,7 @@ export interface MultipleChoice {
     value: string;
   }[];
   maxAllowedSelections?: number;
-  type?: "checkbox" | "chips";
+  type?: "checkbox" | "chips" | "dropdown";
   filterable?: boolean;
 }
 
