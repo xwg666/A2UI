@@ -779,6 +779,67 @@
           }
         }
       }
+    },
+    "FileUpload": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "multiple": {
+          "type": "boolean",
+          "description": "Whether to allow multiple file selection."
+        },
+        "accept": {
+          "type": "string",
+          "description": "Accepted file types (e.g., '.jpg,.png,.pdf')."
+        },
+        "directory": {
+          "type": "boolean",
+          "description": "Whether to allow folder selection (webkitdirectory)."
+        },
+        "action": {
+          "type": "object",
+          "description": "Represents a user-initiated action when files are selected.",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "A unique name identifying the action (e.g., 'submitForm')."
+            },
+            "context": {
+              "type": "array",
+              "description": "A key-value map of data bindings to be resolved when the action is triggered.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "description": "A data binding reference to a location in the data model."
+                      },
+                      "literalString": {
+                        "type": "string"
+                      },
+                      "literalNumber": {
+                        "type": "number"
+                      },
+                      "literalBoolean": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "styles": {

@@ -34,6 +34,7 @@ import {
   TextField,
   Video,
   Table,
+  FileUpload,
 } from "./components";
 import { StringValue } from "./primitives";
 
@@ -131,6 +132,7 @@ export declare type Theme = {
     };
     Video: Record<string, boolean>;
     Table: Record<string, boolean>;
+    FileUpload: Record<string, boolean>;
   };
   elements: {
     a: Record<string, boolean>;
@@ -194,6 +196,7 @@ export declare type Theme = {
     TextField?: Record<string, string>;
     Video?: Record<string, string>;
     Table?: Record<string, string>;
+    FileUpload?: Record<string, string>;
   };
 };
 
@@ -410,6 +413,18 @@ export declare interface TableNode extends BaseComponentNode {
   properties: TableProperties;
 }
 
+export interface FileUploadProperties {
+  multiple?: boolean;
+  accept?: string;
+  directory?: boolean;
+  action?: FileUpload["action"];
+}
+
+export declare interface FileUploadNode extends BaseComponentNode {
+  type: "FileUpload";
+  properties: FileUploadProperties;
+}
+
 export declare interface TextFieldNode extends BaseComponentNode {
   type: "TextField";
   properties: ResolvedTextField;
@@ -460,6 +475,7 @@ export declare type AnyComponentNode =
   | MultipleChoiceNode
   | SliderNode
   | TableNode
+  | FileUploadNode
   | CustomNode;
 
 // These components do not contain other components can reuse their
@@ -476,6 +492,7 @@ export declare type ResolvedDateTimeInput = DateTimeInput;
 export declare type ResolvedMultipleChoice = MultipleChoice;
 export declare type ResolvedSlider = Slider;
 export declare type ResolvedTable = TableProperties;
+export declare type ResolvedFileUpload = FileUploadProperties;
 
 export declare interface ResolvedRow {
   children: AnyComponentNode[];

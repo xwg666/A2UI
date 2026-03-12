@@ -424,6 +424,24 @@ export class Root extends SignalWatcher(LitElement) {
           ></a2ui-table>`;
         }
 
+        case "FileUpload": {
+          const node = component as NodeOfType<"FileUpload">;
+          return html`<a2ui-fileupload
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .dataContextPath=${node.dataContextPath}
+            .multiple=${node.properties.multiple ?? false}
+            .accept=${node.properties.accept ?? ""}
+            .directory=${node.properties.directory ?? false}
+            .action=${node.properties.action ?? null}
+            .enableCustomElements=${this.enableCustomElements}
+          ></a2ui-fileupload>`;
+        }
+
         case "TextField": {
           // TODO: type and validationRegexp.
           const node = component as NodeOfType<"TextField">;

@@ -456,3 +456,95 @@ table_result = [
     }
   }
 ]
+
+
+single_result=[
+  {
+    "beginRendering": {
+      "surfaceId": "default",
+      "root": "root-column"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "default",
+      "components": [
+        {
+          "id": "root-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "name-field",
+                  "age-field",
+                  "sex-field",
+                  "submit-button"
+                ]
+              },
+              "alignment": "center",
+              "spacing": 16
+            }
+          }
+        },
+        {
+          "id": "name-field",
+          "component": {
+            "TextField": {
+              "label": { "literalString": "姓名" },
+              "text": { "path": "/name" },
+              "textFieldType": "shortText"
+            }
+          }
+        },
+        {
+          "id": "age-field",
+          "component": {
+            "TextField": {
+              "label": { "literalString": "年龄" },
+              "text": { "path": "/age" },
+              "textFieldType": "number"
+            }
+          }
+        },
+        {
+          "id": "sex-field",
+          "component": {
+            "TextField": {
+              "label": { "literalString": "性别" },
+              "text": { "path": "/sex" },
+              "textFieldType": "shortText"
+            }
+          }
+        },
+        {
+          "id": "submit-button",
+          "component": {
+            "Button": {
+              "child": "button-text",
+              "primary": True,
+              "action": {
+                "name": "submit_form",
+                "context": []
+              }
+            }
+          }
+        },
+        {
+          "id": "button-text",
+          "component": {
+            "Text": {
+              "text": { "literalString": "提交" }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "default",
+      "path": "/",
+      "contents": []
+    }
+  }
+]

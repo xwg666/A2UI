@@ -409,6 +409,7 @@ export const theme: v0_8.Types.Theme = {
       "layout-el-cv": true,
     },
     Table: {},
+    FileUpload: {},
   },
   elements: {
     a: aLight,

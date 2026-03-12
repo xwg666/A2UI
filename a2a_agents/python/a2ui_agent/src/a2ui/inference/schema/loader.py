@@ -60,9 +60,13 @@ class PackageLoader(A2uiSchemaLoader):
 
   def load(self, filename: str) -> Any:
     try:
-      traversable = importlib.resources.files(self.package_path)
-      resource_path = traversable.joinpath(filename)
-      with resource_path.open("r", encoding=ENCODING) as f:
+      # Handle versioned paths like "a2ui.assets.0.8" by using "a2ui" and joining path
+      if self.package_path.startswith('a2ui.assets.'):
+        version = self.package_path.replace('a2ui.assets.', '')
+        traversable = importlib.resources.files('a2ui').joinpath('assets', version, filename)
+      else:
+        traversable = importlib.resources.files(self.package_path).joinpath(filename)
+      with traversable.open("r", encoding=ENCODING) as f:
         return json.load(f)
     except (ModuleNotFoundError, FileNotFoundError, JSONDecodeError) as e:
       raise IOError(

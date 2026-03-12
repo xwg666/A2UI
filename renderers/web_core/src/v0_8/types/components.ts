@@ -216,3 +216,10 @@ export interface Table {
   headers?: string[];
   rows?: string[][];
 }
+
+export interface FileUpload {
+  multiple?: boolean;
+  accept?: string;
+  directory?: boolean;
+  action?: Action;
+}

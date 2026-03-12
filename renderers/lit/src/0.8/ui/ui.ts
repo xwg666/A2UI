@@ -43,6 +43,7 @@ import { TextField } from "./text-field.js";
 import { Text } from "./text.js";
 import { Video } from "./video.js";
 import { Table } from "./table.js";
+import { FileUpload } from "./fileupload.js";
 
 export * as Context from "./context/theme.js";
 export * as Utils from "./utils/utils.js";
@@ -71,6 +72,7 @@ export {
   TextField,
   Video,
   Table,
+  FileUpload,
 };
 
 interface A2UITagNameMap {
@@ -95,6 +97,7 @@ interface A2UITagNameMap {
   "a2ui-textfield": TextField;
   "a2ui-video": Video;
   "a2ui-table": Table;
+  "a2ui-fileupload": FileUpload;
 }
 
 declare global {
