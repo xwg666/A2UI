@@ -617,7 +617,74 @@ class GeneralQueryAgent:
         # 两种情况需要处理：1. 包含"必填参数"标记  2. 表单提交（用户已填写部分参数）
         is_form_submit = "User submitted: submit_form" in query
         is_navigate = "User submitted: navigate" in query
+        is_confirm = "User submitted: confirm" in query
+        is_cancel = "User submitted: cancel" in query
         has_required_params_mark = '必填参数' in query
+        
+        # 处理确认动作
+        if is_confirm:
+            logger.info("=== 检测到确认动作 ===")
+            # 第一步：显示"正在执行"状态
+            confirm_ui = '''[
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {
+      "children": {"explicitList": ["loading-icon", "loading-text"]},
+      "alignment": "center",
+      "spacing": 16
+    }}},
+    {"id": "loading-icon", "component": {"Text": {"text": {"literalString": "⏳"}, "usageHint": "h1"}}},
+    {"id": "loading-text", "component": {"Text": {"text": {"literalString": "正在执行操作..."}, "usageHint": "h3"}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": []}}
+]'''
+            yield {
+                "is_task_complete": False,
+                "updates": f"正在执行确认操作...---a2ui_JSON---{confirm_ui}"
+            }
+            import time
+            time.sleep(3)
+            # 第二步：显示"执行完毕"状态（任务完成）
+            finall_ui = '''[
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {
+      "children": {"explicitList": ["success-icon", "success-text"]},
+      "alignment": "center",
+      "spacing": 16
+    }}},
+    {"id": "success-icon", "component": {"Text": {"text": {"literalString": "✅"}, "usageHint": "h1"}}},
+    {"id": "success-text", "component": {"Text": {"text": {"literalString": "操作已执行完毕"}, "usageHint": "h3"}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": []}}
+]'''
+            yield {
+                "is_task_complete": True,
+                "content": f"操作已执行完毕---a2ui_JSON---{finall_ui}"
+            }
+            return
+        
+        # 处理取消动作
+        if is_cancel:
+            logger.info("=== 检测到取消动作 ===")
+            cancel_ui = '''[
+  {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
+  {"surfaceUpdate": {"surfaceId": "default", "components": [
+    {"id": "root-column", "component": {"Column": {
+      "children": {"explicitList": ["cancel-icon", "cancel-text"]},
+      "alignment": "center",
+      "spacing": 16
+    }}},
+    {"id": "cancel-icon", "component": {"Text": {"text": {"literalString": "❌"}, "usageHint": "h1"}}},
+    {"id": "cancel-text", "component": {"Text": {"text": {"literalString": "操作已取消"}, "usageHint": "h3"}}}
+  ]}},
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": []}}
+]'''
+            yield {
+                "is_task_complete": True,
+                "content": f"操作已取消---a2ui_JSON---{cancel_ui}"
+            }
+            return
         
         # 检查是否是空数据提交
         if is_form_submit or is_navigate:
