@@ -43,6 +43,9 @@ export class FileUpload extends Root {
   @state()
   private accessor _uploadProgress: number = -1;
 
+  @state()
+  private accessor _previewUrls: Map<string, string> = new Map();
+
   static styles = [
     structuralStyles,
     css`
@@ -136,6 +139,47 @@ export class FileUpload extends Root {
         background-color: #1976d2;
         transition: width 0.3s ease;
       }
+
+      .file-preview {
+        margin-top: 8px;
+        padding: 8px;
+        background-color: #fafafa;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+      }
+
+      .preview-image {
+        max-width: 200px;
+        max-height: 200px;
+        width: auto;
+        height: auto;
+        border-radius: 4px;
+        display: block;
+      }
+
+      .preview-document {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+      }
+
+      .preview-icon {
+        font-size: 24px;
+      }
+
+      .preview-info {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+      }
+
+      .preview-type {
+        color: #666;
+        font-size: 11px;
+      }
     `,
   ];
 
@@ -150,18 +194,61 @@ export class FileUpload extends Root {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this._selectedFiles = Array.from(input.files);
+      // 生成预览
+      this.#generatePreviews();
       // 将文件信息写入 data model
       this.#updateDataModel();
     }
   }
 
+  #generatePreviews() {
+    // 清理旧的预览 URL
+    this._previewUrls.forEach(url => URL.revokeObjectURL(url));
+    this._previewUrls.clear();
+
+    this._selectedFiles.forEach(file => {
+      if (file.type.startsWith('image/')) {
+        // 图片文件：创建 Object URL
+        const url = URL.createObjectURL(file);
+        this._previewUrls.set(file.name, url);
+      }
+      // 其他文件类型不需要预览 URL，会在渲染时显示图标
+    });
+  }
+
+  #getFileIcon(file: File): string {
+    if (file.type.startsWith('image/')) return '🖼️';
+    if (file.type.includes('pdf')) return '📄';
+    if (file.type.includes('word') || file.type.includes('document')) return '📝';
+    if (file.type.includes('excel') || file.type.includes('sheet')) return '📊';
+    if (file.type.includes('powerpoint') || file.type.includes('presentation')) return '📽️';
+    if (file.type.includes('text')) return '📃';
+    if (file.type.includes('zip') || file.type.includes('compressed')) return '📦';
+    return '📎';
+  }
+
+  #formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
   #removeFile(index: number) {
+    const removedFile = this._selectedFiles[index];
+    // 清理该文件的预览 URL
+    if (removedFile && this._previewUrls.has(removedFile.name)) {
+      URL.revokeObjectURL(this._previewUrls.get(removedFile.name)!);
+      this._previewUrls.delete(removedFile.name);
+    }
     this._selectedFiles = this._selectedFiles.filter((_, i) => i !== index);
     this.#updateDataModel();
   }
 
   #updateDataModel() {
-    if (!this.processor) {
+    if (!this.processor || !this.component) {
+      console.log("[FileUpload] Cannot update data model: missing processor or component");
       return;
     }
 
@@ -176,19 +263,43 @@ export class FileUpload extends Root {
     // 写入 data model
     // 使用 dataContextPath 作为路径，默认为 /files
     const surfaceId = this.surfaceId || "default";
-    const path = this.dataContextPath || "/files";
+    const path = "/files";  // 使用绝对路径
 
-    console.log("[FileUpload] Updating data model:", { path, fileInfos });
+    console.log("[FileUpload] Updating data model:", { path, fileInfos, component: this.component.id });
 
-    // 直接通过 processor 更新数据
-    (this.processor as any).setDataByPath(
-      (this.processor as any).getOrCreateSurface(surfaceId).dataModel,
+    // 使用 processor.setData 更新数据
+    this.processor.setData(
+      this.component,
       path,
-      fileInfos.length === 1 ? fileInfos[0] : fileInfos
+      fileInfos.length === 1 ? fileInfos[0] : fileInfos,
+      surfaceId
     );
+  }
 
-    // 触发重建以更新 UI
-    (this.processor as any).rebuildComponentTree((this.processor as any).getOrCreateSurface(surfaceId));
+  #renderFilePreview(file: File) {
+    if (file.type.startsWith('image/')) {
+      const previewUrl = this._previewUrls.get(file.name);
+      if (previewUrl) {
+        return html`
+          <div class="file-preview">
+            <img class="preview-image" src=${previewUrl} alt=${file.name} />
+          </div>
+        `;
+      }
+    }
+    
+    // 文档或其他文件类型显示图标和信息
+    return html`
+      <div class="file-preview">
+        <div class="preview-document">
+          <span class="preview-icon">${this.#getFileIcon(file)}</span>
+          <div class="preview-info">
+            <span>${file.name}</span>
+            <span class="preview-type">${this.#formatFileSize(file.size)} · ${file.type || '未知类型'}</span>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   #renderFileList() {
@@ -208,6 +319,7 @@ export class FileUpload extends Root {
                 ×
               </button>
             </div>
+            ${this.#renderFilePreview(file)}
           `
         )}
       </div>

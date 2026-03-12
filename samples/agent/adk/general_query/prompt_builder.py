@@ -708,9 +708,20 @@ def generate_full_prompt():
     - 设置为 1 = 单选
 - **Slider**: 滑块输入
 - **DateTimeInput**: 日期时间选择器
+  - `value`: 日期时间值，使用 `path` 绑定到 data model
+  - `enableDate`: 是否显示日期选择（true/false）
+  - `enableTime`: 是否显示时间选择（true/false）
+  - ⚠️ **重要**：必须在 `dataModelUpdate` 中提供初始值，格式为 ISO 8601 字符串
+    - 日期时间：`"2026-03-12T10:30:00"`
+    - 仅日期：`"2026-03-12"`
+    - 仅时间：`"10:30:00"`
 - **CheckBox**: 复选框/单选框
   - `type`: 类型 ("checkbox" 或 "radio")
 - **Button**: 按钮组件
+  - `primary`: 是否为主要按钮（蓝色）
+  - `action`: 按钮点击动作
+    - `name`: 动作名称
+    - `context`: 上下文数据（可选）
 - **Column**: 列布局组件
   - `alignment`: 子组件对齐方式 ("start" | "center" | "end")
     - `"center"` - 子组件居中（按钮居中必须使用此属性）
@@ -726,19 +737,29 @@ def generate_full_prompt():
   {"beginRendering": {"surfaceId": "default", "root": "root-column"}},
   {"surfaceUpdate": {"surfaceId": "default", "components": [
     {"id": "root-column", "component": {"Column": {
-      "children": {"explicitList": ["name-field", "age-field", "sex-field", "submit-button"]},
+      "children": {"explicitList": ["name-field", "date-field", "time-field", "submit-button"]},
       "alignment": "center", 
       "spacing": 20
     }}},
     {"id": "name-field", "component": {"TextField": {"label": {"literalString": "姓名"}, "text": {"path": "/name"}, "textFieldType": "shortText"}}},
-    {"id": "age-field", "component": {"TextField": {"label": {"literalString": "年龄"}, "text": {"path": "/age"}, "textFieldType": "number"}}},
-    {"id": "sex-field", "component": {"TextField": {"label": {"literalString": "性别"}, "text": {"path": "/sex"}, "textFieldType": "shortText"}}},
+    {"id": "date-field", "component": {"DateTimeInput": {"value": {"path": "/date"}, "enableDate": true, "enableTime": false}}},
+    {"id": "time-field", "component": {"DateTimeInput": {"value": {"path": "/time"}, "enableDate": false, "enableTime": true}}},
     {"id": "submit-button", "component": {"Button": {"child": "button-text", "primary": true, "action": {"name": "submit", "context": []}}}},
     {"id": "button-text", "component": {"Text": {"text": {"literalString": "提交"}}}}
   ]}},
-  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": []}}
+  {"dataModelUpdate": {"surfaceId": "default", "path": "/", "contents": [
+    {"key": "name", "valueString": ""},
+    {"key": "date", "valueString": "2026-03-12"},
+    {"key": "time", "valueString": "10:00:00"}
+  ]}}
 ]
 ```
+
+⚠️ **表单重要提示**：
+- 所有使用 `path` 绑定的字段（TextField、DateTimeInput、MultipleChoice 等）都必须在 `dataModelUpdate` 中提供初始值
+- DateTimeInput 的初始值必须是 ISO 8601 格式
+- MultipleChoice 的初始值必须是数组格式，即使是单选也要用数组
+
 """
         
         prompt = prompt[:end_idx] + chinese_component_guide + prompt[end_idx:]

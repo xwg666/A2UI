@@ -1,5 +1,5 @@
 1.API参数澄清-根据表单字段要求生成表单UI，完成字段收集：
-
+查询张三，并用table表格展示
 生成一个输入框，包含name,age,sex字段，带有提交按钮。
 查询我的信息 --必填参数：["name"]               --张三
 查询的员工账号什么时候到期？  --必填参数：["name","id"]    
@@ -8,7 +8,7 @@
 
 2.根据json数据自动化设计渲染UI
 
-使用表格展示下面数据：[ {
+使用table组件展示下面数据：使用表格展示下面数据：[ {
     "type": "person",
     "id": "1002",
     "姓名": "李四",
@@ -115,6 +115,118 @@ AI驱动的影像稳定增强技术
 
 [markdown展示]：
 # 用户信息列表以下是系统中的核心用户信息，包含基础资料和状态标识： | 用户ID | 用户名   | 年龄 | 性别 | 注册时间       | 账号状态 ||--------|----------|------|------|----------------|----------|| 001    | 张三     | 28   | 男   | 2024-01-15     | 正常     || 002    | 李四     | 32   | 女   | 2024-02-20     | 正常     || 003    | 王五     | 25   | 男   | 2024-03-10     | 冻结     || 004    | 赵六     | 40   | 女   | 2024-04-05     | 正常     |## 备注- 「冻结」状态用户需联系管理员解锁- 年龄字段仅展示成年用户（≥18岁）
- 
  用table组件展示用户信息：<template>   <div class="user-list">     <h2>用户信息列表</h2>     <table>       <thead>         <tr>           <th>用户ID</th>           <th>用户名</th>           <th>年龄</th>           <th>性别</th>           <th>注册时间</th>           <th>账号状态</th>         </tr>       </thead>       <tbody>         <tr v-for="user in userList" :key="user.id" :class="{ frozen: user.status === '冻结' }">           <td>{{ user.id }}</td>           <td>{{ user.name }}</td>           <td>{{ user.age }}</td>           <td>{{ user.gender }}</td>           <td>{{ user.registerTime }}</td>           <td>{{ user.status }}</td>         </tr>       </tbody>     </table>   </div> </template> <script setup> // Demo 数据定义 const userList = [   { id: '001', name: '张三', age: 28, gender: '男', registerTime: '2024-01-15', status: '正常' },   { id: '002', name: '李四', age: 32, gender: '女', registerTime: '2024-02-20', status: '正常' },   { id: '003', name: '王五', age: 25, gender: '男', registerTime: '2024-03-10', status: '冻结' },   { id: '004', name: '赵六', age: 40, gender: '女', registerTime: '2024-04-05', status: '正常' } ]; </script> <style scoped> .user-list {   width: 80%;   margin: 20px auto; } table {   width: 100%;   border-collapse: collapse; } th, td {   border: 1px solid #ccc;   padding: 8px;   text-align: center; } th {   background-color: #f5f5f5; } .frozen {   color: #ff4444;   background-color: #fff5f5; } </style>
  
+
+ 请生成会议室预订表单界面，严格解决标签重复和标签未左对齐的问题，具体要求如下：
+ 
+#### 核心样式与布局要求
+1.  标题规范：
+    - 标题视觉突出，与表单整体风格协调
+ 
+2.  表单控件对齐：
+    - 日期、时间、人数等所有带标签的输入类控件，统一采用「标签+输入框」水平布局
+    - 所有标签文字强制左对齐，且标签左边缘在同一垂直线上，视觉整齐
+    - 输入框紧随标签右侧，与标签垂直居中对齐，控件样式统一无错位
+ 
+3.  整体设计：
+    - 采用卡片式设计，风格简洁现代，主色调为浅紫/蓝紫色系
+    - 表单整体垂直居中布局，设备选择（投影仪/白板）、确认按钮等组件间距协调
+    - 确认按钮为浅紫/蓝紫色，文字“确认预订”居中显示，视觉突出
+ 
+#### 格式稳定性要求
+- 生成的界面结构完整，无冗余组件，严格按需求渲染，不额外追加元素
+- 所有控件样式统一，对齐方式一致，无突兀的视觉差异
+
+
+
+【展示】
+ 
+【1、展示图文混合文章】
+展示文章，不改变文章中的图片http地址，其中图片展示在文字之间：联想集团执行副总裁、方案服务业务集团（SSG）总裁黄建恒表示：“当下，AI发展已经进入新阶段，可执行与可衡量正成为部署AI的重要先决条件。这需要可信赖的基础设施、完善的治理机制和生态协作。随着香港不断深化AI在各行业的应用，联想正通过混合式 AI 战略，赋能企业以安全、高效、负责任的方式实现AI的规模化发展。”https://p3-sign.toutiaoimg.com/tos-cn-i-axegupay5k/d37eff0967f746b7baf91ec7f9d9a1b3~tplv-tt-origin-web:gif.jpeg?_iz=58558&from=article.pc_detail&lk3s=953192f4&x-expires=1773828857&x-signature=S4n9S9wtDaQbcCEmCOKRcPfukkA%3D混合式 AI 破局产业痛点，推动 AI 规模化落地如今，无论是在香港还是全球范围， AI 投资持续攀升。据联想与 IDC 联合发布的《联想全球首席信息官（CIO）报告》）显示，在香港，50% 的受访机构预计仍需 12 个月以上才能实现 AI 准备就绪；47% 的受访亚太地区企业仍处于政策制定，应用尚未落地的阶段。高效部署与规模化落地已成为企业的核心诉求。
+ 
+【2、流式内容展示】
+展示该流式内容：识别如下流式返回数据，将里面的文本答案内容完整出来：将如下流式的数据，提取结果合并后完整展示：将如下流式数据，完整提取后进行展示：id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"创建"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"结果"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"如下"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"：\n\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Material"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"   "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Sales"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"Org"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Status"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"              "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Message"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"                                     "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"-------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"----------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"----------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"--------------------------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"--------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"4"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"TA"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"7"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"A"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"9"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"5"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"3"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" US"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"Q"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"    "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Creation"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" is"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" successful"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" The"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" material"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"4"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"TA"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"7"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"A"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"9"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"-"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"5"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"3"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" has"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" been"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" created"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" or"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" extended"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"inquiryList":"[]"}id:[DONE]data:[DONE]retry:3000
+ 
+【3、视频播放展示】
+文字：SSG FY2526财年Q3财报，视频地址：https://cms-asset.lenovo.com/p/SSG%20File/SSG%20Earnings/LenovoQ3EarningsFeb10.mp4
+文字：Sintel 电影预告片，视频地址：https://media.w3.org/2010/05/sintel/trailer.mp4
+
+【4、文字加表格展示】
+使用table组件进行展示，并且在表格的上面加一句：联想万全异构智算平台，表格下面加一句：联想在企业智能领域，从推出“端-边-云-网-智”架构的混合式基础设施，到打造联想混合式人工智能优势集，再到最近发布的企业超级智能体“乐享”，面向未来，联想将继续构建人工智能模型工厂，开发智能体平台，充分释放混合式人工智能优势集的潜力3297368。
+：
+编辑器			是否免费	中文支持	    	项目理解			适合场景
+Trae			✅ 免费	⭐⭐⭐⭐⭐		⭐⭐⭐⭐		国内全栈项目
+Cursor			❌ 付费	⭐⭐⭐	    	⭐⭐⭐⭐⭐		国际复杂项目
+Copilot			❌ 付费	⭐⭐	    	⭐⭐⭐⭐		VS Code 用户
+CodeWhisperer	✅ 免费	⭐⭐⭐			⭐⭐⭐			企业安全开发
+
+【5、json格式表格演示】
+使用table组件展示下面数据：[ {
+    "type": "person",
+    "id": "1002",
+    "姓名": "李四",
+    "性别": "女",
+    "年龄": "19",
+    "职位": "设计师",
+    "联系方式": "12345678902",
+    "账号到期时间": "2025-06-30"
+  },
+  {
+    "type": "person",
+    "id": "1003",
+    "姓名": "王五",
+    "性别": "男",
+    "年龄": "20",
+    "职位": "教师",
+    "联系方式": "12345678903",
+    "账号到期时间": "2026-03-15"
+  }
+]
+
+【6、纯文本格式美化展示】
+
+2025年，联想在AI导向的基础设施领域持续创新，推出了多项关键技术与产品，具体包括：
+联想万全异构智算平台
+联想在2024年4月18日的创新科技大会上发布了面向AI 2.0时代的联想万全异构智算平台。该平台集成了五大创新技术，包括：
+算力匹配魔方
+GPU内核态虚拟化
+联想集合通信算法库
+AI高效断点续训技术
+AI与HPC异构集群超级调度器
+这些技术突破了计算效率瓶颈，帮助用户提高应用部署速度，降低业务TCO（全周期使用成本），为AI 2.0时代的大模型训练和推理构建稳定高效的基础设施底座3297368。
+“一横五纵”完整格局
+联想构建了以“联想万全异构智算平台”为横向支撑的“一横五纵”完整格局，结合服务器、存储、数据网络、软件及超融合、边缘基础设施产品和方案，持续助力企业筑牢“数字底座”，为其智能化转型提供坚实可靠的支撑3297368。
+混合式人工智能优势集
+联想在企业智能领域，从推出“端-边-云-网-智”架构的混合式基础设施，到打造联想混合式人工智能优势集，再到最近发布的企业超级智能体“乐享”，面向未来，联想将继续构建人工智能模型工厂，开发智能体平台，充分释放混合式人工智能优势集的潜力3297368。
+AI基础设施解决方案在体育赛事中的应用
+联想为2026年FIFA世界杯提供智能赛事运营体系，包括智能指挥中心、AI生成的深度日报、场馆数字孪生技术等，通过AI基础设施解决方案深度融入赛事运营体系，实时优化现场体验3705868。
+AI驱动的影像稳定增强技术
+联想在2025年FIFA世俱杯成功试运行裁判随身摄像头后，进一步在2026年FIFA世界杯中应用AI驱动的影像稳定增强技术，为赛事转播提供多路信号源，并为球迷创造独特的观赛“第一视角”，深度呈现裁判员的现场判罚实时体验3705868。
+这些创新举措不仅展示了联想在AI导向的基础设施领域的技术实力，也为企业的智能化转型提供了坚实的基础3297368。
+
+【多字段生成演示】
+生成一个输入框，包含name,age,sex,birthday这四个字段，根据字段特征选择合适的组件，带有提交按钮，按钮水平居中
+
+【7、视频播放展示】
+文字：Sintel 电影预告片，视频地址：https://media.w3.org/2010/05/sintel/trailer.mp4
+
+
+【8、markdown展示】
+# 用户信息列表以下是系统中的核心用户信息，包含基础资料和状态标识： | 用户ID | 用户名   | 年龄 | 性别 | 注册时间       | 账号状态 ||--------|----------|------|------|----------------|----------|| 001    | 张三     | 28   | 男   | 2024-01-15     | 正常     || 002    | 李四     | 32   | 女   | 2024-02-20     | 正常     || 003    | 王五     | 25   | 男   | 2024-03-10     | 冻结     || 004    | 赵六     | 40   | 女   | 2024-04-05     | 正常     |## 备注- 「冻结」状态用户需联系管理员解锁- 年龄字段仅展示成年用户（≥18岁）
+ 用table组件展示用户信息：<template>   <div class="user-list">     <h2>用户信息列表</h2>     <table>       <thead>         <tr>           <th>用户ID</th>           <th>用户名</th>           <th>年龄</th>           <th>性别</th>           <th>注册时间</th>           <th>账号状态</th>         </tr>       </thead>       <tbody>         <tr v-for="user in userList" :key="user.id" :class="{ frozen: user.status === '冻结' }">           <td>{{ user.id }}</td>           <td>{{ user.name }}</td>           <td>{{ user.age }}</td>           <td>{{ user.gender }}</td>           <td>{{ user.registerTime }}</td>           <td>{{ user.status }}</td>         </tr>       </tbody>     </table>   </div> </template> <script setup> // Demo 数据定义 const userList = [   { id: '001', name: '张三', age: 28, gender: '男', registerTime: '2024-01-15', status: '正常' },   { id: '002', name: '李四', age: 32, gender: '女', registerTime: '2024-02-20', status: '正常' },   { id: '003', name: '王五', age: 25, gender: '男', registerTime: '2024-03-10', status: '冻结' },   { id: '004', name: '赵六', age: 40, gender: '女', registerTime: '2024-04-05', status: '正常' } ]; </script> <style scoped> .user-list {   width: 80%;   margin: 20px auto; } table {   width: 100%;   border-collapse: collapse; } th, td {   border: 1px solid #ccc;   padding: 8px;   text-align: center; } th {   background-color: #f5f5f5; } .frozen {   color: #ff4444;   background-color: #fff5f5; } </style>
+ 
+【9、vue演示】
+<template>   <div class="user-list">     <h2>用户信息列表</h2>     <table>       <thead>         <tr>           <th>用户ID</th>           <th>用户名</th>           <th>年龄</th>           <th>性别</th>           <th>注册时间</th>           <th>账号状态</th>         </tr>       </thead>       <tbody>         <tr v-for="user in userList" :key="user.id" :class="{ frozen: user.status === '冻结' }">           <td>{{ user.id }}</td>           <td>{{ user.name }}</td>           <td>{{ user.age }}</td>           <td>{{ user.gender }}</td>           <td>{{ user.registerTime }}</td>           <td>{{ user.status }}</td>         </tr>       </tbody>     </table>   </div> </template> <script setup> // Demo 数据定义 const userList = [   { id: '001', name: '张三', age: 28, gender: '男', registerTime: '2024-01-15', status: '正常' },   { id: '002', name: '李四', age: 32, gender: '女', registerTime: '2024-02-20', status: '正常' },   { id: '003', name: '王五', age: 25, gender: '男', registerTime: '2024-03-10', status: '冻结' },   { id: '004', name: '赵六', age: 40, gender: '女', registerTime: '2024-04-05', status: '正常' } ]; </script> <style scoped> .user-list {   width: 80%;   margin: 20px auto; } table {   width: 100%;   border-collapse: collapse; } th, td {   border: 1px solid #ccc;   padding: 8px;   text-align: center; } th {   background-color: #f5f5f5; } .frozen {   color: #ff4444;   background-color: #fff5f5; } </style>
+
+【10、HTML演示】
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>用户列表 Demo</title><style>.user-list {width: 80%;margin: 20px auto;}table {width: 100%;border-collapse: collapse;}th, td {border: 1px solid #ccc;padding: 8px;text-align: center;}th {background-color: #f5f5f5;}.frozen {color: #ff4444;background-color: #fff5f5;}</style></head><body><div class="user-list"><h2>用户信息列表</h2><table><thead><tr><th>用户ID</th><th>用户名</th><th>年龄</th><th>性别</th><th>注册时间</th><th>账号状态</th></tr></thead><tbody><tr><td>001</td><td>张三</td><td>28</td><td>男</td><td>2024-01-15</td><td>正常</td></tr><tr><td>002</td><td>李四</td><td>32</td><td>女</td><td>2024-02-20</td><td>正常</td></tr><tr class="frozen"><td>003</td><td>王五</td><td>25</td><td>男</td><td>2024-03-10</td><td>冻结</td></tr><tr><td>004</td><td>赵六</td><td>40</td><td>女</td><td>2024-04-05</td><td>正常</td></tr></tbody></table></div></body></html>
+
+【交互类场】
+
+【11、数据查询演示】
+查询我的信息 --必填参数：["name"]
+
+【12、上传文档】
+生成一个上传文件的选择器，用户要选择上传一个文件，并且需要提交。
+
