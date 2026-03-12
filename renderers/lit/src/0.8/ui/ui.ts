@@ -44,6 +44,7 @@ import { Text } from "./text.js";
 import { Video } from "./video.js";
 import { Table } from "./table.js";
 import { FileUpload } from "./fileupload.js";
+import { Bilibili } from "./bilibili.js";
 
 export * as Context from "./context/theme.js";
 export * as Utils from "./utils/utils.js";
@@ -73,6 +74,7 @@ export {
   Video,
   Table,
   FileUpload,
+  Bilibili,
 };
 
 interface A2UITagNameMap {
@@ -98,6 +100,7 @@ interface A2UITagNameMap {
   "a2ui-video": Video;
   "a2ui-table": Table;
   "a2ui-fileupload": FileUpload;
+  "a2ui-bilibili": Bilibili;
 }
 
 declare global {

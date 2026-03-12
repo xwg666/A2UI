@@ -22,6 +22,7 @@ export { type Action } from "./components.js";
 
 import {
   AudioPlayer,
+  Bilibili,
   Button,
   Checkbox,
   DateTimeInput,
@@ -353,6 +354,11 @@ export declare interface VideoNode extends BaseComponentNode {
   properties: ResolvedVideo;
 }
 
+export declare interface BilibiliNode extends BaseComponentNode {
+  type: "Bilibili";
+  properties: ResolvedBilibili;
+}
+
 export declare interface AudioPlayerNode extends BaseComponentNode {
   type: "AudioPlayer";
   properties: ResolvedAudioPlayer;
@@ -460,6 +466,7 @@ export declare type AnyComponentNode =
   | IconNode
   | ImageNode
   | VideoNode
+  | BilibiliNode
   | AudioPlayerNode
   | RowNode
   | ColumnNode
@@ -484,6 +491,7 @@ export declare type ResolvedText = Text;
 export declare type ResolvedIcon = Icon;
 export declare type ResolvedImage = Image;
 export declare type ResolvedVideo = Video;
+export declare type ResolvedBilibili = Bilibili;
 export declare type ResolvedAudioPlayer = AudioPlayer;
 export declare type ResolvedDivider = Divider;
 export declare type ResolvedCheckbox = Checkbox;

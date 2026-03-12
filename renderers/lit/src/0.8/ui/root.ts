@@ -477,6 +477,22 @@ export class Root extends SignalWatcher(LitElement) {
           ></a2ui-video>`;
         }
 
+        case "Bilibili": {
+          const node = component as NodeOfType<"Bilibili">;
+          return html`<a2ui-bilibili
+            id=${node.id}
+            slot=${node.slotName ? node.slotName : nothing}
+            .component=${node}
+            .weight=${node.weight ?? "initial"}
+            .processor=${this.processor}
+            .surfaceId=${this.surfaceId}
+            .dataContextPath=${node.dataContextPath}
+            .bvid=${node.properties.bvid}
+            .page=${node.properties.page ?? 1}
+            .enableCustomElements=${this.enableCustomElements}
+          ></a2ui-bilibili>`;
+        }
+
         case "Tabs": {
           const node = component as NodeOfType<"Tabs">;
           const titles: StringValue[] = [];

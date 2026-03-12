@@ -2,31 +2,38 @@
 
 生成一个输入框，包含name,age,sex字段，带有提交按钮。
 查询我的信息 --必填参数：["name"]               --张三
-查询的员工账号什么时候到期？  --必填参数：["name","id"]         - -李四
+查询的员工账号什么时候到期？  --必填参数：["name","id"]    
 
 我的邮箱什么时候到期？  --必填参数：["name","email"]
 
 2.根据json数据自动化设计渲染UI
 
-展示下面数据：[{
-    "type": "IT",
-    "商品名称": "电脑",
-    "价格": "2000",
-    "描述": "这是联想电脑",
-	"图片":"https://seopic.699pic.com/photo/50080/0238.jpg_wh1200.jpg"
+使用表格展示下面数据：[ {
+    "type": "person",
+    "id": "1002",
+    "姓名": "李四",
+    "性别": "女",
+    "年龄": "19",
+    "职位": "设计师",
+    "联系方式": "12345678902",
+    "账号到期时间": "2025-06-30"
   },
   {
-    "type": "IT",
-    "商品名称": "VPN",
-    "价格": "100",
-    "描述": "这是一个VPN",
-	"图片": "https://cdn.pixabay.com/photo/2019/11/19/08/44/map-4636843_1280.jpg"
+    "type": "person",
+    "id": "1003",
+    "姓名": "王五",
+    "性别": "男",
+    "年龄": "20",
+    "职位": "教师",
+    "联系方式": "12345678903",
+    "账号到期时间": "2026-03-15"
   }
 ]
 
 展示下面数据：{     "type": "IT",     "商品名称": "电脑",     "价格": "2000",     "描述": "这是联想电脑",     "图片": "https://seopic.699pic.com/photo/50080/0238.jpg_wh1200.jpg"   }
 
-使用table组件进行展示：
+使用table组件进行展示，并且在表格的上面加一句：联想万全异构智算平台，表格下面加一句：联想在企业智能领域，从推出“端-边-云-网-智”架构的混合式基础设施，到打造联想混合式人工智能优势集，再到最近发布的企业超级智能体“乐享”，面向未来，联想将继续构建人工智能模型工厂，开发智能体平台，充分释放混合式人工智能优势集的潜力3297368。
+：
 编辑器			是否免费	中文支持	    	项目理解			适合场景
 Trae			✅ 免费	⭐⭐⭐⭐⭐		⭐⭐⭐⭐		国内全栈项目
 Cursor			❌ 付费	⭐⭐⭐	    	⭐⭐⭐⭐⭐		国际复杂项目
@@ -103,4 +110,11 @@ AI驱动的影像稳定增强技术
 展示该流式内容：识别如下流式返回数据，将里面的文本答案内容完整出来：将如下流式的数据，提取结果合并后完整展示：将如下流式数据，完整提取后进行展示：id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"创建"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"结果"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"如下"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"：\n\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Material"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"   "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Sales"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"Org"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Status"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"              "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Message"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"                                     "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"-------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"----------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"----------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"--------------------------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"--------------"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|\n"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"|"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"4"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"TA"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"7"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"A"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"9"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"5"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"3"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" US"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"Q"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"    "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" Creation"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" is"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" successful"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" The"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" material"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" "}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"4"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"TA"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"7"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"A"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"9"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"-"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"1"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"5"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":"3"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" has"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" been"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" created"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" or"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" extended"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"isSafe":true,"data":" |"}retry:3000id:a7b66666a752437c9e5514984315c84edata:{"inquiryList":"[]"}id:[DONE]data:[DONE]retry:3000
  
 【视频播放展示】
-文字：SSG FY2526财年Q3财报，视频地址：https://cms-asset.lenovo.com/p/SSG%20File/SSG%20Earnings/LenovoQ3EarningsFeb10.mp4
+文字：Sintel 电影预告片，视频地址：https://media.w3.org/2010/05/sintel/trailer.mp4
+
+
+[markdown展示]：
+# 用户信息列表以下是系统中的核心用户信息，包含基础资料和状态标识： | 用户ID | 用户名   | 年龄 | 性别 | 注册时间       | 账号状态 ||--------|----------|------|------|----------------|----------|| 001    | 张三     | 28   | 男   | 2024-01-15     | 正常     || 002    | 李四     | 32   | 女   | 2024-02-20     | 正常     || 003    | 王五     | 25   | 男   | 2024-03-10     | 冻结     || 004    | 赵六     | 40   | 女   | 2024-04-05     | 正常     |## 备注- 「冻结」状态用户需联系管理员解锁- 年龄字段仅展示成年用户（≥18岁）
+ 
+ 用table组件展示用户信息：<template>   <div class="user-list">     <h2>用户信息列表</h2>     <table>       <thead>         <tr>           <th>用户ID</th>           <th>用户名</th>           <th>年龄</th>           <th>性别</th>           <th>注册时间</th>           <th>账号状态</th>         </tr>       </thead>       <tbody>         <tr v-for="user in userList" :key="user.id" :class="{ frozen: user.status === '冻结' }">           <td>{{ user.id }}</td>           <td>{{ user.name }}</td>           <td>{{ user.age }}</td>           <td>{{ user.gender }}</td>           <td>{{ user.registerTime }}</td>           <td>{{ user.status }}</td>         </tr>       </tbody>     </table>   </div> </template> <script setup> // Demo 数据定义 const userList = [   { id: '001', name: '张三', age: 28, gender: '男', registerTime: '2024-01-15', status: '正常' },   { id: '002', name: '李四', age: 32, gender: '女', registerTime: '2024-02-20', status: '正常' },   { id: '003', name: '王五', age: 25, gender: '男', registerTime: '2024-03-10', status: '冻结' },   { id: '004', name: '赵六', age: 40, gender: '女', registerTime: '2024-04-05', status: '正常' } ]; </script> <style scoped> .user-list {   width: 80%;   margin: 20px auto; } table {   width: 100%;   border-collapse: collapse; } th, td {   border: 1px solid #ccc;   padding: 8px;   text-align: center; } th {   background-color: #f5f5f5; } .frozen {   color: #ff4444;   background-color: #fff5f5; } </style>
+ 

@@ -49,6 +49,11 @@ export class Video extends Root {
     `,
   ];
 
+  #cleanUrl(url: string): string {
+    // 去除反引号、空格和换行符
+    return url.replace(/[`\s\n\r]/g, '');
+  }
+
   #renderVideo() {
     console.log("[Video] Rendering with url:", this.url);
     
@@ -59,15 +64,29 @@ export class Video extends Root {
 
     if (this.url && typeof this.url === "object") {
       if ("literalString" in this.url && this.url.literalString) {
-        console.log("[Video] Using literalString:", this.url.literalString);
-        return html`<video controls style="width:100%;max-width:100%;">
-          <source src=${this.url.literalString} type="video/mp4" />
+        const cleanUrl = this.#cleanUrl(this.url.literalString);
+        console.log("[Video] Using literalString:", cleanUrl);
+        return html`<video 
+          controls 
+          crossorigin="anonymous"
+          preload="metadata"
+          style="width:100%;max-width:100%;min-height:200px;"
+          @error=${(e: Event) => console.error("[Video] Error loading video:", e)}
+        >
+          <source src=${cleanUrl} type="video/mp4" />
           您的浏览器不支持视频播放。
         </video>`;
       } else if ("literal" in this.url && this.url.literal) {
-        console.log("[Video] Using literal:", this.url.literal);
-        return html`<video controls style="width:100%;max-width:100%;">
-          <source src=${this.url.literal} type="video/mp4" />
+        const cleanUrl = this.#cleanUrl(this.url.literal);
+        console.log("[Video] Using literal:", cleanUrl);
+        return html`<video 
+          controls 
+          crossorigin="anonymous"
+          preload="metadata"
+          style="width:100%;max-width:100%;min-height:200px;"
+          @error=${(e: Event) => console.error("[Video] Error loading video:", e)}
+        >
+          <source src=${cleanUrl} type="video/mp4" />
           您的浏览器不支持视频播放。
         </video>`;
       } else if ("path" in this.url && this.url.path) {

@@ -69,6 +69,11 @@ export interface Video {
   url: StringValue;
 }
 
+export interface Bilibili {
+  bvid: StringValue;
+  page?: number;
+}
+
 export interface AudioPlayer {
   url: StringValue;
   /**

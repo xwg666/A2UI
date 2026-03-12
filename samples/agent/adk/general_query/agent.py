@@ -473,7 +473,15 @@ class GeneralQueryAgent:
                         if isinstance(data, list) and len(data) > 0:
                             return data
                     except json.JSONDecodeError:
-                        pass
+                        # 尝试修复常见的 JSON 错误
+                        fixed_json = self._fix_json_string(json_str)
+                        try:
+                            data = json.loads(fixed_json)
+                            if isinstance(data, list) and len(data) > 0:
+                                logger.info(f"  修复后的 JSON 数据: {len(data)} 条")
+                                return data
+                        except json.JSONDecodeError:
+                            pass
                     start_idx = -1
                     in_array = False
             elif char == '{' and not in_array:
@@ -503,10 +511,40 @@ class GeneralQueryAgent:
                                 # 单个对象转换为列表
                                 return [data]
                     except json.JSONDecodeError:
-                        pass
+                        # 尝试修复常见的 JSON 错误
+                        fixed_json = self._fix_json_string(json_str)
+                        try:
+                            data = json.loads(fixed_json)
+                            if isinstance(data, dict) and len(data) > 0:
+                                data_keys = set(data.keys())
+                                if not data_keys.issubset({'scene_type', 'scene_data'}):
+                                    return [data]
+                        except json.JSONDecodeError:
+                            pass
                     start_idx = -1
         
         return None
+    
+    def _fix_json_string(self, json_str: str) -> str:
+        """
+        修复常见的 JSON 格式错误
+        
+        Args:
+            json_str: 原始 JSON 字符串
+            
+        Returns:
+            str: 修复后的 JSON 字符串
+        """
+        import re
+        
+        # 1. 移除尾部逗号（在 ] 或 } 之前的逗号）
+        # 匹配 , 后面跟着 ] 或 }
+        fixed = re.sub(r',\s*([\]\}])', r'\1', json_str)
+        
+        # 2. 移除多余的空白字符
+        fixed = fixed.strip()
+        
+        return fixed
 
     def _get_data_directly(self, query: str) -> list:
         """
