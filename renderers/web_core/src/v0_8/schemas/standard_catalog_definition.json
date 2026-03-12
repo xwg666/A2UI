@@ -174,34 +174,6 @@
         "url"
       ]
     },
-    "Bilibili": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Embed a Bilibili video player. Supports BV ID or full Bilibili URL.",
-      "properties": {
-        "bvid": {
-          "type": "object",
-          "description": "The Bilibili video ID (BVxxx) or full Bilibili URL. This can be a literal string ('literalString') or a reference to a value in the data model ('path', e.g. '/video/bvid').",
-          "additionalProperties": false,
-          "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
-          }
-        },
-        "page": {
-          "type": "number",
-          "description": "The page number for multi-part videos. Default is 1.",
-          "default": 1
-        }
-      },
-      "required": [
-        "bvid"
-      ]
-    },
     "AudioPlayer": {
       "type": "object",
       "additionalProperties": false,

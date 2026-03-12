@@ -5,6 +5,12 @@
 由于数据获取逻辑已移到 agent.py，LLM 只需要专注于生成 UI。
 """
 
+import sys
+import os
+# 添加 a2ui 模块路径
+A2UI_AGENT_PATH = r'g:\python\项目文件\A2UI\a2a_agents\python\a2ui_agent\src'
+sys.path.insert(0, A2UI_AGENT_PATH)
+
 from a2ui.inference.schema.manager import A2uiSchemaManager
 from a2ui.inference.schema.common_modifiers import remove_strict_validation
 
@@ -38,7 +44,7 @@ WORKFLOW_DESCRIPTION = """
 4. **数组数据**：使用 List 组件的 `dataBinding` 绑定数组
    - 例如：`"dataBinding": "/items"`
 5. **⚠️ 禁止使用的属性**：`fit`、`usageHint`、`OptionSelect`、`Input`、`TextInput`
-6. **⚠️ 禁止使用的组件**：`VideoPlayer`、`AudioPlayer`、`WebFrame`
+6. **⚠️ 禁止使用的组件**：`WebFrame`
    - 这些属性会导致验证失败，不要在 JSON 中使用
 
 ## 支持的交互组件

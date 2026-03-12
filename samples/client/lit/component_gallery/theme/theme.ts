@@ -293,6 +293,7 @@ export const theme: v0_8.Types.Theme = {
       },
     },
     Divider: {},
+    FileUpload: {},
     Image: {
       all: {
         "border-br-5": true,
@@ -336,6 +337,7 @@ export const theme: v0_8.Types.Theme = {
       label: {},
       element: {},
     },
+    Table: {},
     Tabs: {
       container: {},
       controls: { all: {}, selected: {} },

@@ -10,6 +10,12 @@ General Query Agent - 通用查询 Agent 启动入口
     python __main__.py --host localhost --port 10002
 """
 
+import sys
+import os
+# 添加 a2ui 模块路径
+A2UI_AGENT_PATH = r'g:\python\项目文件\A2UI\a2a_agents\python\a2ui_agent\src'
+sys.path.insert(0, A2UI_AGENT_PATH)
+
 import logging
 import os
 
