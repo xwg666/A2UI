@@ -16,6 +16,20 @@ WORKFLOW_DESCRIPTION = """
 6. 使用工具返回的真实数据生成 UI，禁止编造数据
 7. 空结果时：文本---a2ui_JSON---[]
 
+## 处理用户点击事件
+
+当用户点击链接或按钮时，会收到类似以下格式的消息：
+```
+User submitted an event: None with data: {'url': '[More Info](https://xxx)'}
+```
+
+**处理规则**：
+- 如果用户点击了外部链接（如 `https://` 开头的 URL），返回一个提示消息：
+  ```
+  正在跳转到外部页面...---a2ui_JSON---[]
+  ```
+- 不要尝试生成复杂的 UI，直接返回简单文本即可
+
 ⚠️ **重要**：必须使用工具返回的真实数据，不要使用示例数据如 "Peking Duck House"、"Golden Wok" 等！
 """
 #优先考虑使用餐厅展示的列表UI设计
