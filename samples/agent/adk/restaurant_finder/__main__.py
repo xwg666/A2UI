@@ -76,9 +76,11 @@ def main(host, port):
 
     # 静态文件目录（如果存在则挂载）
     import pathlib
-    images_dir = pathlib.Path("images")
+    script_dir = pathlib.Path(__file__).parent
+    images_dir = script_dir / "images"
     if images_dir.exists():
-        app.mount("/static", StaticFiles(directory="images"), name="static")
+        app.mount("/static", StaticFiles(directory=str(images_dir)), name="static")
+        logger.info(f"静态文件服务已挂载: {images_dir}")
 
     uvicorn.run(app, host=host, port=port)
   except MissingAPIKeyError as e:
