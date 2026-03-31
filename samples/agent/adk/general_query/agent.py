@@ -20,6 +20,10 @@ from collections.abc import AsyncIterable
 from typing import Any
 import re
 import jsonschema
+from dotenv import load_dotenv
+
+# 加载环境变量
+load_dotenv()
 from a2a.types import AgentCapabilities, AgentCard, AgentSkill
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
@@ -137,6 +141,9 @@ class GeneralQueryAgent:
         """
         LITELLM_MODEL = os.getenv("LITELLM_MODEL", "dashscope/qwen3.5-plus")
         DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+        # LITELLM_MODEL = os.getenv("LITELLM_MODEL", "moonshot/v1-8k")
+        # MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY")
+
 
         instruction = get_ui_prompt() if self.use_ui else get_text_prompt()
         logger.info(f"提示词: {instruction[:200]}...")
